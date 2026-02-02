@@ -1,0 +1,23 @@
+{
+  "name": "figma-ex",
+  "version": "1.0.0",
+  "description": "Figma EX - 增强Figma功能的扩展插件",
+  "main": "code.js",
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc -w",
+    "dev": "tsc -w"
+  },
+  "keywords": [
+    "figma",
+    "figma-plugin",
+    "design",
+    "productivity"
+  ],
+  "author": "YYC³",
+  "license": "MIT",
+  "devDependencies": {
+    "@figma/plugin-typings": "^1.84.0",
+    "typescript": "^5.0.0"
+  }
+}

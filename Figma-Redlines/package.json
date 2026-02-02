@@ -1,0 +1,23 @@
+{
+  "name": "figma-redlines",
+  "version": "1.0.0",
+  "description": "Redline annotations and design review tools for Figma",
+  "main": "code.js",
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc -w"
+  },
+  "keywords": [
+    "figma",
+    "figma-plugin",
+    "redlines",
+    "annotations",
+    "design-review"
+  ],
+  "author": "YYC³ Team",
+  "license": "MIT",
+  "devDependencies": {
+    "@figma/plugin-typings": "^1.80.0",
+    "typescript": "^5.0.0"
+  }
+}

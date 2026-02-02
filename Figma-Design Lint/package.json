@@ -1,0 +1,16 @@
+{
+  "name": "figma-design-lint",
+  "version": "1.0.0",
+  "description": "Design Lint - Check your designs for consistency and best practices",
+  "main": "code.js",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "dev": "tsc -p tsconfig.json --watch"
+  },
+  "author": "YYC³",
+  "license": "MIT",
+  "devDependencies": {
+    "@figma/plugin-typings": "*",
+    "typescript": "^5.3.2"
+  }
+}

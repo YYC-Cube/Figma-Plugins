@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Figma Redlines</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background-color: #f5f5f5;
+      color: #1a1a1a;
+      line-height: 1.6;
+    }
+
+    .container {
+      padding: 20px;
+    }
+
+    h1 {
+      font-size: 20px;
+      font-weight: 600;
+      margin-bottom: 20px;
+      color: #1a1a1a;
+    }
+
+    h2 {
+      font-size: 16px;
+      font-weight: 600;
+      margin: 20px 0 10px;
+      color: #333333;
+    }
+
+    .section {
+      background-color: white;
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 16px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+
+    .btn {
+      background-color: #0066cc;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      padding: 8px 16px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background-color 0.2s;
+      margin-right: 8px;
+      margin-bottom: 8px;
+    }
+
+    .btn:hover {
+      background-color: #0052a3;
+    }
+
+    .btn-secondary {
+      background-color: #666666;
+    }
+
+    .btn-secondary:hover {
+      background-color: #525252;
+    }
+
+    .btn-danger {
+      background-color: #dc3545;
+    }
+
+    .btn-danger:hover {
+      background-color: #c82333;
+    }
+
+    .btn-sm {
+      padding: 6px 12px;
+      font-size: 12px;
+    }
+
+    .annotation-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 12px;
+      margin-top: 12px;
+    }
+
+    .annotation-card {
+      background-color: #f9f9f9;
+      border: 1px solid #e0e0e0;
+      border-radius: 6px;
+      padding: 12px;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .annotation-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      border-color: #0066cc;
+    }
+
+    .annotation-name {
+      font-weight: 600;
+      font-size: 14px;
+      margin-bottom: 4px;
+    }
+
+    .annotation-description {
+      font-size: 12px;
+      color: #666666;
+      margin-bottom: 8px;
+    }
+
+    .color-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      display: inline-block;
+      margin-right: 6px;
+    }
+
+    .control-group {
+      margin: 12px 0;
+    }
+
+    .control-row {
+      display: flex;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .control-label {
+      width: 100px;
+      font-size: 13px;
+      color: #333333;
+    }
+
+    .control-input {
+      flex: 1;
+      padding: 6px 8px;
+      border: 1px solid #e0e0e0;
+      border-radius: 4px;
+      font-size: 13px;
+    }
+
+    .control-select {
+      flex: 1;
+      padding: 6px 8px;
+      border: 1px solid #e0e0e0;
+      border-radius: 4px;
+      font-size: 13px;
+    }
+
+    .button-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 12px 0;
+    }
+
+    .status-message {
+      background-color: #e3f2fd;
+      color: #1976d2;
+      border-radius: 4px;
+      padding: 12px;
+      margin: 10px 0;
+      font-size: 14px;
+    }
+
+    .error-message {
+      background-color: #ffebee;
+      color: #c62828;
+      border-radius: 4px;
+      padding: 12px;
+      margin: 10px 0;
+      font-size: 14px;
+    }
+
+    .loading {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      color: #666666;
+    }
+
+    .spinner {
+      border: 2px solid #f3f3f3;
+      border-top: 2px solid #0066cc;
+      border-radius: 50%;
+      width: 16px;
+      height: 16px;
+      animation: spin 1s linear infinite;
+      margin-right: 8px;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .review-template {
+      background-color: #f9f9f9;
+      border: 1px solid #e0e0e0;
+      border-radius: 6px;
+      padding: 12px;
+      margin-bottom: 12px;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .review-template:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      border-color: #0066cc;
+    }
+
+    .template-name {
+      font-weight: 600;
+      font-size: 14px;
+      margin-bottom: 4px;
+    }
+
+    .template-description {
+      font-size: 12px;
+      color: #666666;
+      margin-bottom: 8px;
+    }
+
+    .check-list {
+      list-style: none;
+      padding: 0;
+    }
+
+    .check-item {
+      font-size: 12px;
+      color: #333333;
+      padding: 4px 0;
+      padding-left: 20px;
+      position: relative;
+    }
+
+    .check-item::before {
+      content: '✓';
+      position: absolute;
+      left: 0;
+      color: #4CAF50;
+    }
+
+    .review-results {
+      margin-top: 12px;
+    }
+
+    .result-item {
+      background-color: #f9f9f9;
+      border-radius: 4px;
+      padding: 12px;
+      margin-bottom: 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .result-check {
+      flex: 1;
+    }
+
+    .result-text {
+      font-weight: 500;
+      font-size: 14px;
+      margin-bottom: 4px;
+    }
+
+    .result-notes {
+      font-size: 12px;
+      color: #666666;
+    }
+
+    .result-status {
+      font-size: 12px;
+      font-weight: 600;
+      padding: 4px 12px;
+      border-radius: 12px;
+      margin-left: 12px;
+    }
+
+    .status-passed {
+      background-color: #e8f5e8;
+      color: #2e7d32;
+    }
+
+    .status-failed {
+      background-color: #ffebee;
+      color: #c62828;
+    }
+
+    .report-summary {
+      background-color: #f0f0f0;
+      border-radius: 6px;
+      padding: 16px;
+      margin-top: 12px;
+    }
+
+    .report-stat {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 8px;
+    }
+
+    .stat-label {
+      font-size: 13px;
+      color: #666666;
+    }
+
+    .stat-value {
+      font-weight: 600;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>📝 Figma Redlines</h1>
+    
+    <!-- 标注工具 -->
+    <div class="section">
+      <h2>标注工具</h2>
+      <p style="font-size: 13px; color: #666666; margin-bottom: 12px;">选择标注类型并添加到设计</p>
+      <div class="annotation-grid" id="annotation-types"></div>
+      
+      <div class="control-group" style="margin-top: 16px;">
+        <div class="control-row">
+          <label class="control-label">标注文本:</label>
+          <input type="text" class="control-input" id="annotation-text" placeholder="输入标注内容">
+        </div>
+      </div>
+      
+      <div class="button-group">
+        <button class="btn" onclick="addAnnotation('TEXT')">添加文本标注</button>
+        <button class="btn" onclick="addDimension()">添加尺寸标注</button>
+        <button class="btn" onclick="addSpacing()">添加间距标注</button>
+      </div>
+    </div>
+
+    <!-- 设计审查 -->
+    <div class="section">
+      <h2>设计审查</h2>
+      <p style="font-size: 13px; color: #666666; margin-bottom: 12px;">选择审查模板进行设计审查</p>
+      <div id="review-templates"></div>
+      <div id="review-results" style="margin-top: 16px;"></div>
+    </div>
+
+    <!-- 标注管理 -->
+    <div class="section">
+      <h2>标注管理</h2>
+      <div class="button-group">
+        <button class="btn" onclick="toggleAnnotations()">切换显示</button>
+        <button class="btn btn-secondary" onclick="exportAnnotations('pdf')">导出PDF</button>
+        <button class="btn btn-secondary" onclick="exportAnnotations('png')">导出图片</button>
+        <button class="btn btn-secondary" onclick="exportAnnotations('json')">导出JSON</button>
+        <button class="btn btn-danger" onclick="clearAnnotations()">清除所有标注</button>
+      </div>
+    </div>
+
+    <!-- 审查报告 -->
+    <div class="section">
+      <h2>审查报告</h2>
+      <button class="btn" onclick="createReviewReport()">创建审查报告</button>
+      <div id="report-results" style="margin-top: 16px;"></div>
+    </div>
+
+    <!-- 操作结果 -->
+    <div class="section">
+      <h2>操作结果</h2>
+      <div id="operation-results"></div>
+    </div>
+  </div>
+
+  <script>
+    // 标注类型数据
+    const annotationTypes = [
+      {
+        id: '1',
+        name: '尺寸标注',
+        description: '标注元素的宽高尺寸',
+        type: 'DIMENSION',
+        color: '#FF5722'
+      },
+      {
+        id: '2',
+        name: '间距标注',
+        description: '标注元素之间的间距',
+        type: 'SPACING',
+        color: '#2196F3'
+      },
+      {
+        id: '3',
+        name: '文本标注',
+        description: '添加文本说明和注释',
+        type: 'TEXT',
+        color: '#4CAF50'
+      },
+      {
+        id: '4',
+        name: '问题标注',
+        description: '标注设计问题和需要修改的地方',
+        type: 'ISSUE',
+        color: '#F44336'
+      },
+      {
+        id: '5',
+        name: '建议标注',
+        description: '标注设计建议和改进意见',
+        type: 'SUGGESTION',
+        color: '#FF9800'
+      },
+      {
+        id: '6',
+        name: '完成标注',
+        description: '标注已完成的部分',
+        type: 'COMPLETED',
+        color: '#9C27B0'
+      }
+    ];
+
+    // 审查模板数据
+    const reviewTemplates = [
+      {
+        id: '1',
+        name: '视觉一致性',
+        description: '检查颜色、字体、间距等视觉元素的一致性',
+        checks: [
+          '颜色使用是否一致',
+          '字体大小和样式是否统一',
+          '间距和边距是否规范',
+          '图标风格是否一致'
+        ]
+      },
+      {
+        id: '2',
+        name: '可访问性',
+        description: '检查设计的可访问性和无障碍支持',
+        checks: [
+          '颜色对比度是否达标',
+          '字体大小是否可读',
+          '是否有足够的点击区域',
+          '是否支持键盘导航'
+        ]
+      },
+      {
+        id: '3',
+        name: '响应式设计',
+        description: '检查设计在不同屏幕尺寸下的表现',
+        checks: [
+          '是否适配移动端',
+          '是否适配平板设备',
+          '是否适配桌面端',
+          '布局是否灵活适应'
+        ]
+      },
+      {
+        id: '4',
+        name: '用户体验',
+        description: '检查用户体验和交互设计',
+        checks: [
+          '导航是否清晰',
+          '操作流程是否顺畅',
+          '反馈是否及时',
+          '错误处理是否完善'
+        ]
+      }
+    ];
+
+    // 初始化页面
+    document.addEventListener('DOMContentLoaded', function() {
+      renderAnnotationTypes();
+      renderReviewTemplates();
+    });
+
+    // 渲染标注类型
+    function renderAnnotationTypes() {
+      const typesContainer = document.getElementById('annotation-types');
+      typesContainer.innerHTML = annotationTypes.map(type => `
+        <div class="annotation-card" onclick="addAnnotation('${type.type}')">
+          <div class="annotation-name">
+            <span class="color-dot" style="background-color: ${type.color};"></span>
+            ${type.name}
+          </div>
+          <div class="annotation-description">${type.description}</div>
+        </div>
+      `).join('');
+    }
+
+    // 渲染审查模板
+    function renderReviewTemplates() {
+      const templatesContainer = document.getElementById('review-templates');
+      templatesContainer.innerHTML = reviewTemplates.map(template => `
+        <div class="review-template" onclick="runReview('${template.id}')">
+          <div class="template-name">${template.name}</div>
+          <div class="template-description">${template.description}</div>
+          <ul class="check-list">
+            ${template.checks.slice(0, 3).map(check => `<li class="check-item">${check}</li>`).join('')}
+            ${template.checks.length > 3 ? `<li class="check-item">...共 ${template.checks.length} 项检查</li>` : ''}
+          </ul>
+        </div>
+      `).join('');
+    }
+
+    // 发送消息到插件代码
+    function sendMessage(type, data = {}) {
+      parent.postMessage({ pluginMessage: { type, ...data } }, '*');
+    }
+
+    // 添加标注
+    function addAnnotation(annotationType) {
+      const text = document.getElementById('annotation-text').value;
+      const resultsDiv = document.getElementById('operation-results');
+      resultsDiv.innerHTML = '<div class="loading"><div class="spinner"></div>正在添加标注...</div>';
+      sendMessage('add-annotation', { annotationType, text, position: { x: 0, y: 0 } });
+    }
+
+    // 添加尺寸标注
+    function addDimension() {
+      const resultsDiv = document.getElementById('operation-results');
+      resultsDiv.innerHTML = '<div class="loading"><div class="spinner"></div>正在添加尺寸标注...</div>';
+      sendMessage('add-dimension', { target: 'selected' });
+    }
+
+    // 添加间距标注
+    function addSpacing() {
+      const resultsDiv = document.getElementById('operation-results');
+      resultsDiv.innerHTML = '<div class="loading"><div class="spinner"></div>正在添加间距标注...</div>';
+      sendMessage('add-spacing', { target1: 'selected1', target2: 'selected2' });
+    }
+
+    // 运行审查
+    function runReview(templateId) {
+      const resultsDiv = document.getElementById('review-results');
+      resultsDiv.innerHTML = '<div class="loading"><div class="spinner"></div>正在运行审查...</div>';
+      sendMessage('run-review', { templateId });
+    }
+
+    // 导出标注
+    function exportAnnotations(format) {
+      const resultsDiv = document.getElementById('operation-results');
+      resultsDiv.innerHTML = '<div class="loading"><div class="spinner"></div>正在导出标注...</div>';
+      sendMessage('export-annotations', { format });
+    }
+
+    // 清除标注
+    function clearAnnotations() {
+      const resultsDiv = document.getElementById('operation-results');
+      resultsDiv.innerHTML = '<div class="loading"><div class="spinner"></div>正在清除标注...</div>';
+      sendMessage('clear-annotations');
+    }
+
+    // 切换标注显示
+    function toggleAnnotations() {
+      const resultsDiv = document.getElementById('operation-results');
+      resultsDiv.innerHTML = '<div class="loading"><div class="spinner"></div>正在切换标注显示...</div>';
+      sendMessage('toggle-annotations');
+    }
+
+    // 创建审查报告
+    function createReviewReport() {
+      const resultsDiv = document.getElementById('report-results');
+      resultsDiv.innerHTML = '<div class="loading"><div class="spinner"></div>正在创建审查报告...</div>';
+      sendMessage('create-review-report');
+    }
+
+    // 处理来自插件代码的消息
+    onmessage = (event) => {
+      const { type, ...data } = event.data.pluginMessage;
+      
+      switch (type) {
+        case 'annotation-added':
+        case 'dimension-added':
+        case 'spacing-added':
+        case 'annotations-cleared':
+        case 'annotations-toggled':
+        case 'annotations-exported':
+          handleStatusMessage(data.message);
+          break;
+        case 'review-completed':
+          handleReviewCompleted(data);
+          break;
+        case 'report-created':
+          handleReportCreated(data);
+          break;
+        case 'error':
+          handleErrorMessage(data.message);
+          break;
+      }
+    };
+
+    // 处理状态消息
+    function handleStatusMessage(message) {
+      const resultsDiv = document.getElementById('operation-results');
+      resultsDiv.innerHTML = `<div class="status-message">${message}</div>`;
+    }
+
+    // 处理审查完成
+    function handleReviewCompleted(data) {
+      const resultsDiv = document.getElementById('review-results');
+      const results = data.results;
+      
+      let html = `<div class="status-message">${data.message}</div>`;
+      html += '<h3 style="font-size: 14px; margin: 16px 0 8px;">审查结果:</h3>';
+      html += '<div class="review-results">';
+      results.forEach(result => {
+        const statusClass = result.status === 'passed' ? 'status-passed' : 'status-failed';
+        const statusText = result.status === 'passed' ? '通过' : '未通过';
+        html += `
+          <div class="result-item">
+            <div class="result-check">
+              <div class="result-text">${result.check}</div>
+              <div class="result-notes">${result.notes}</div>
+            </div>
+            <div class="result-status ${statusClass}">${statusText}</div>
+          </div>
+        `;
+      });
+      html += '</div>';
+      
+      resultsDiv.innerHTML = html;
+    }
+
+    // 处理报告创建
+    function handleReportCreated(data) {
+      const resultsDiv = document.getElementById('report-results');
+      const report = data.report;
+      
+      let html = `<div class="status-message">${data.message}</div>`;
+      html += '<div class="report-summary">';
+      html += '<h3 style="font-size: 14px; margin-bottom: 12px;">审查报告摘要:</h3>';
+      html += `
+        <div class="report-stat">
+          <span class="stat-label">总标注数:</span>
+          <span class="stat-value">${report.totalAnnotations}</span>
+        </div>
+        <div class="report-stat">
+          <span class="stat-label">问题数:</span>
+          <span class="stat-value">${report.issues}</span>
+        </div>
+        <div class="report-stat">
+          <span class="stat-label">建议数:</span>
+          <span class="stat-value">${report.suggestions}</span>
+        </div>
+        <div class="report-stat">
+          <span class="stat-label">已完成:</span>
+          <span class="stat-value">${report.completed}</span>
+        </div>
+      `;
+      html += `<p style="margin-top: 12px; font-size: 13px; color: #666666;">${report.summary}</p>`;
+      html += '</div>';
+      
+      resultsDiv.innerHTML = html;
+    }
+
+    // 处理错误消息
+    function handleErrorMessage(message) {
+      const resultsDiv = document.getElementById('operation-results');
+      resultsDiv.innerHTML = `<div class="error-message">${message}</div>`;
+    }
+  </script>
+</body>
+</html>

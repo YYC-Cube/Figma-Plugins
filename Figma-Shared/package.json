@@ -1,0 +1,27 @@
+{
+  "name": "figma-postgres-shared",
+  "version": "1.0.0",
+  "description": "共享模块库 - PostgreSQL插件生态系统核心",
+  "main": "index.ts",
+  "private": true,
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc --watch",
+    "lint": "eslint . --ext .ts",
+    "test": "jest"
+  },
+  "keywords": [
+    "figma",
+    "postgresql",
+    "database",
+    "codegen",
+    "shared"
+  ],
+  "author": "YYC³",
+  "license": "MIT",
+  "devDependencies": {
+    "@figma/plugin-typings": "^1.0.0",
+    "@types/node": "^20.0.0",
+    "typescript": "^5.0.0"
+  }
+}

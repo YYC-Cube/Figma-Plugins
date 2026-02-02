@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Figma Auto Layout Pro</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background-color: #f5f5f5;
+      color: #1a1a1a;
+      line-height: 1.6;
+    }
+
+    .container {
+      padding: 20px;
+    }
+
+    h1 {
+      font-size: 20px;
+      font-weight: 600;
+      margin-bottom: 20px;
+      color: #1a1a1a;
+    }
+
+    h2 {
+      font-size: 16px;
+      font-weight: 600;
+      margin: 20px 0 10px;
+      color: #333333;
+    }
+
+    .section {
+      background-color: white;
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 16px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+
+    .btn {
+      background-color: #0066cc;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      padding: 8px 16px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background-color 0.2s;
+      margin-right: 8px;
+      margin-bottom: 8px;
+    }
+
+    .btn:hover {
+      background-color: #0052a3;
+    }
+
+    .btn-secondary {
+      background-color: #666666;
+    }
+
+    .btn-secondary:hover {
+      background-color: #525252;
+    }
+
+    .btn-sm {
+      padding: 6px 12px;
+      font-size: 12px;
+    }
+
+    .preset-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 12px;
+      margin-top: 12px;
+    }
+
+    .preset-card {
+      background-color: #f9f9f9;
+      border: 1px solid #e0e0e0;
+      border-radius: 6px;
+      padding: 12px;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .preset-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      border-color: #0066cc;
+    }
+
+    .preset-name {
+      font-weight: 600;
+      font-size: 14px;
+      margin-bottom: 4px;
+    }
+
+    .preset-description {
+      font-size: 12px;
+      color: #666666;
+      margin-bottom: 8px;
+    }
+
+    .preset-details {
+      font-size: 11px;
+      color: #999999;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .rule-list {
+      margin-top: 12px;
+    }
+
+    .rule-item {
+      background-color: #f9f9f9;
+      border: 1px solid #e0e0e0;
+      border-radius: 6px;
+      padding: 12px;
+      margin-bottom: 8px;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+
+    .rule-item:hover {
+      background-color: #f0f0f0;
+      border-color: #0066cc;
+    }
+
+    .rule-name {
+      font-weight: 500;
+      font-size: 14px;
+      margin-bottom: 4px;
+    }
+
+    .rule-description {
+      font-size: 12px;
+      color: #666666;
+    }
+
+    .control-group {
+      margin: 12px 0;
+    }
+
+    .control-row {
+      display: flex;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .control-label {
+      width: 120px;
+      font-size: 13px;
+      color: #333333;
+    }
+
+    .control-input {
+      flex: 1;
+      padding: 6px 8px;
+      border: 1px solid #e0e0e0;
+      border-radius: 4px;
+      font-size: 13px;
+    }
+
+    .button-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 12px 0;
+    }
+
+    .spacing-controls {
+      display: flex;
+      gap: 8px;
+      margin: 12px 0;
+    }
+
+    .spacing-controls input {
+      width: 80px;
+      padding: 6px 8px;
+      border: 1px solid #e0e0e0;
+      border-radius: 4px;
+      font-size: 13px;
+    }
+
+    .grid-controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin: 12px 0;
+    }
+
+    .grid-control {
+      display: flex;
+      flex-direction: column;
+      min-width: 100px;
+    }
+
+    .grid-control label {
+      font-size: 12px;
+      color: #666666;
+      margin-bottom: 4px;
+    }
+
+    .grid-control input {
+      padding: 6px 8px;
+      border: 1px solid #e0e0e0;
+      border-radius: 4px;
+      font-size: 13px;
+    }
+
+    .status-message {
+      background-color: #e3f2fd;
+      color: #1976d2;
+      border-radius: 4px;
+      padding: 12px;
+      margin: 10px 0;
+      font-size: 14px;
+    }
+
+    .error-message {
+      background-color: #ffebee;
+      color: #c62828;
+      border-radius: 4px;
+      padding: 12px;
+      margin: 10px 0;
+      font-size: 14px;
+    }
+
+    .loading {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      color: #666666;
+    }
+
+    .spinner {
+      border: 2px solid #f3f3f3;
+      border-top: 2px solid #0066cc;
+      border-radius: 50%;
+      width: 16px;
+      height: 16px;
+      animation: spin 1s linear infinite;
+      margin-right: 8px;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>📐 Figma Auto Layout Pro</h1>
+    
+    <!-- 布局预设 -->
+    <div class="section">
+      <h2>布局预设</h2>
+      <p style="font-size: 13px; color: #666666; margin-bottom: 12px;">选择并应用预定义的布局配置</p>
+      <div class="preset-grid" id="layout-presets"></div>
+    </div>
+
+    <!-- 智能布局 -->
+    <div class="section">
+      <h2>智能布局规则</h2>
+      <p style="font-size: 13px; color: #666666; margin-bottom: 12px;">应用智能布局规则优化元素排列</p>
+      <div class="rule-list" id="smart-rules"></div>
+    </div>
+
+    <!-- 间距调整 -->
+    <div class="section">
+      <h2>间距调整</h2>
+      <div class="spacing-controls">
+        <input type="number" id="spacing-amount" value="4" min="1" max="100">
+        <button class="btn" onclick="adjustSpacing('increase')">增加间距</button>
+        <button class="btn" onclick="adjustSpacing('decrease')">减少间距</button>
+      </div>
+    </div>
+
+    <!-- 元素分布与对齐 -->
+    <div class="section">
+      <h2>元素分布与对齐</h2>
+      <div class="button-group">
+        <button class="btn btn-sm" onclick="distributeElements('horizontal')">水平分布</button>
+        <button class="btn btn-sm" onclick="distributeElements('vertical')">垂直分布</button>
+        <button class="btn btn-sm" onclick="alignElements('left')">左对齐</button>
+        <button class="btn btn-sm" onclick="alignElements('center')">水平居中</button>
+        <button class="btn btn-sm" onclick="alignElements('right')">右对齐</button>
+        <button class="btn btn-sm" onclick="alignElements('top')">顶部对齐</button>
+        <button class="btn btn-sm" onclick="alignElements('middle')">垂直居中</button>
+        <button class="btn btn-sm" onclick="alignElements('bottom')">底部对齐</button>
+      </div>
+    </div>
+
+    <!-- 网格创建 -->
+    <div class="section">
+      <h2>网格创建</h2>
+      <div class="grid-controls">
+        <div class="grid-control">
+          <label for="grid-columns">列数</label>
+          <input type="number" id="grid-columns" value="3" min="1" max="24">
+        </div>
+        <div class="grid-control">
+          <label for="grid-rows">行数</label>
+          <input type="number" id="grid-rows" value="3" min="1" max="24">
+        </div>
+        <div class="grid-control">
+          <label for="grid-gap">间距</label>
+          <input type="number" id="grid-gap" value="16" min="0" max="100">
+        </div>
+      </div>
+      <button class="btn" onclick="createGrid()">创建网格</button>
+    </div>
+
+    <!-- 批量操作 -->
+    <div class="section">
+      <h2>批量操作</h2>
+      <div class="button-group">
+        <button class="btn" onclick="batchLayout('add')">批量添加自动布局</button>
+        <button class="btn" onclick="batchLayout('remove')">批量移除自动布局</button>
+        <button class="btn" onclick="convertToAutoLayout()">转换为自动布局</button>
+      </div>
+    </div>
+
+    <!-- 操作结果 -->
+    <div class="section">
+      <h2>操作结果</h2>
+      <div id="operation-results"></div>
+    </div>
+  </div>
+
+  <script>
+    // 布局预设数据
+    const layoutPresets = [
+      {
+        id: '1',
+        name: '垂直堆栈',
+        description: '垂直排列元素，居中对齐',
+        direction: 'VERTICAL',
+        alignment: 'CENTER',
+        spacing: 16,
+        padding: 16
+      },
+      {
+        id: '2',
+        name: '水平堆栈',
+        description: '水平排列元素，居中对齐',
+        direction: 'HORIZONTAL',
+        alignment: 'CENTER',
+        spacing: 16,
+        padding: 16
+      },
+      {
+        id: '3',
+        name: '卡片布局',
+        description: '垂直排列元素，左对齐，带内边距',
+        direction: 'VERTICAL',
+        alignment: 'MIN',
+        spacing: 12,
+        padding: 20
+      },
+      {
+        id: '4',
+        name: '导航栏',
+        description: '水平排列元素，居中对齐，最小高度',
+        direction: 'HORIZONTAL',
+        alignment: 'CENTER',
+        spacing: 24,
+        padding: 16,
+        minHeight: 60
+      },
+      {
+        id: '5',
+        name: '表单布局',
+        description: '垂直排列元素，左对齐，带标签间距',
+        direction: 'VERTICAL',
+        alignment: 'MIN',
+        spacing: 20,
+        padding: 16
+      },
+      {
+        id: '6',
+        name: '网格布局',
+        description: '创建响应式网格布局',
+        direction: 'VERTICAL',
+        alignment: 'MIN',
+        spacing: 16,
+        padding: 0,
+        gridColumns: 3
+      }
+    ];
+
+    // 智能布局规则数据
+    const smartLayoutRules = [
+      {
+        id: '1',
+        name: '等宽分配',
+        description: '将容器宽度平均分配给子元素',
+        type: 'EQUAL_WIDTH'
+      },
+      {
+        id: '2',
+        name: '等高水平居中',
+        description: '水平居中且等宽排列元素',
+        type: 'EQUAL_WIDTH_CENTER'
+      },
+      {
+        id: '3',
+        name: '等高分配',
+        description: '将容器高度平均分配给子元素',
+        type: 'EQUAL_HEIGHT'
+      },
+      {
+        id: '4',
+        name: '等高垂直居中',
+        description: '垂直居中且等高排列元素',
+        type: 'EQUAL_HEIGHT_CENTER'
+      },
+      {
+        id: '5',
+        name: '最大宽度优先',
+        description: '根据最大元素宽度调整布局',
+        type: 'MAX_WIDTH'
+      },
+      {
+        id: '6',
+        name: '最小宽度优先',
+        description: '根据最小元素宽度调整布局',
+        type: 'MIN_WIDTH'
+      }
+    ];
+
+    // 初始化页面
+    document.addEventListener('DOMContentLoaded', function() {
+      renderLayoutPresets();
+      renderSmartRules();
+    });
+
+    // 渲染布局预设
+    function renderLayoutPresets() {
+      const presetsContainer = document.getElementById('layout-presets');
+      presetsContainer.innerHTML = layoutPresets.map(preset => `
+        <div class="preset-card" onclick="applyLayoutPreset('${preset.id}')">
+          <div class="preset-name">${preset.name}</div>
+          <div class="preset-description">${preset.description}</div>
+          <div class="preset-details">
+            <span>${preset.direction === 'VERTICAL' ? '垂直' : '水平'}</span>
+            <span>间距: ${preset.spacing}px</span>
+            <span>内边距: ${preset.padding}px</span>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // 渲染智能布局规则
+    function renderSmartRules() {
+      const rulesContainer = document.getElementById('smart-rules');
+      rulesContainer.innerHTML = smartLayoutRules.map(rule => `
+        <div class="rule-item" onclick="applySmartLayout('${rule.id}')">
+          <div class="rule-name">${rule.name}</div>
+          <div class="rule-description">${rule.description}</div>
+        </div>
+      `).join('');
+    }
+
+    // 发送消息到插件代码
+    function sendMessage(type, data = {}) {
+      parent.postMessage({ pluginMessage: { type, ...data } }, '*');
+    }
+
+    // 应用布局预设
+    function applyLayoutPreset(presetId) {
+      const resultsDiv = document.getElementById('operation-results');
+      resultsDiv.innerHTML = '<div class="loading"><div class="spinner"></div>正在应用布局预设...</div>';
+      sendMessage('apply-layout-preset', { presetId });
+    }
+
+    // 应用智能布局
+    function applySmartLayout(ruleId) {
+      const resultsDiv = document.getElementById('operation-results');
+      resultsDiv.innerHTML = '<div class="loading"><div class="spinner"></div>正在应用智能布局规则...</div>';
+      sendMessage('apply-smart-layout', { ruleId });
+    }
+
+    // 调整间距
+    function adjustSpacing(direction) {
+      const amount = parseInt(document.getElementById('spacing-amount').value);
+      const resultsDiv = document.getElementById('operation-results');
+      resultsDiv.innerHTML = `<div class="loading"><div class="spinner"></div>正在${direction === 'increase' ? '增加' : '减少'}间距...</div>`;
+      sendMessage('adjust-spacing', { amount, direction });
+    }
+
+    // 分布元素
+    function distributeElements(direction) {
+      const resultsDiv = document.getElementById('operation-results');
+      resultsDiv.innerHTML = `<div class="loading"><div class="spinner"></div>正在${direction === 'horizontal' ? '水平' : '垂直'}分布元素...</div>`;
+      sendMessage('distribute-elements', { direction });
+    }
+
+    // 对齐元素
+    function alignElements(alignType) {
+      const resultsDiv = document.getElementById('operation-results');
+      resultsDiv.innerHTML = '<div class="loading"><div class="spinner"></div>正在对齐元素...</div>';
+      sendMessage('align-elements', { alignType });
+    }
+
+    // 创建网格
+    function createGrid() {
+      const columns = parseInt(document.getElementById('grid-columns').value);
+      const rows = parseInt(document.getElementById('grid-rows').value);
+      const gap = parseInt(document.getElementById('grid-gap').value);
+      const resultsDiv = document.getElementById('operation-results');
+      resultsDiv.innerHTML = '<div class="loading"><div class="spinner"></div>正在创建网格...</div>';
+      sendMessage('create-grid', { columns, rows, gap });
+    }
+
+    // 批量布局操作
+    function batchLayout(operation) {
+      const resultsDiv = document.getElementById('operation-results');
+      resultsDiv.innerHTML = `<div class="loading"><div class="spinner"></div>正在执行批量${operation === 'add' ? '添加' : '移除'}操作...</div>`;
+      sendMessage('batch-layout', { operation });
+    }
+
+    // 转换为自动布局
+    function convertToAutoLayout() {
+      const resultsDiv = document.getElementById('operation-results');
+      resultsDiv.innerHTML = '<div class="loading"><div class="spinner"></div>正在转换为自动布局...</div>';
+      sendMessage('convert-to-auto-layout');
+    }
+
+    // 处理来自插件代码的消息
+    onmessage = (event) => {
+      const { type, ...data } = event.data.pluginMessage;
+      
+      switch (type) {
+        case 'preset-applied':
+        case 'smart-layout-applied':
+        case 'spacing-adjusted':
+        case 'elements-distributed':
+        case 'elements-aligned':
+        case 'grid-created':
+        case 'converted-to-auto-layout':
+        case 'batch-operation-completed':
+          handleStatusMessage(data.message);
+          break;
+        case 'error':
+          handleErrorMessage(data.message);
+          break;
+      }
+    };
+
+    // 处理状态消息
+    function handleStatusMessage(message) {
+      const resultsDiv = document.getElementById('operation-results');
+      resultsDiv.innerHTML = `<div class="status-message">${message}</div>`;
+    }
+
+    // 处理错误消息
+    function handleErrorMessage(message) {
+      const resultsDiv = document.getElementById('operation-results');
+      resultsDiv.innerHTML = `<div class="error-message">${message}</div>`;
+    }
+  </script>
+</body>
+</html>

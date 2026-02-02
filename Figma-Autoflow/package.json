@@ -1,0 +1,23 @@
+{
+  "name": "figma-autoflow",
+  "version": "1.0.0",
+  "description": "Automatic flow diagram and connector creation plugin for Figma",
+  "main": "code.js",
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc -w"
+  },
+  "keywords": [
+    "figma",
+    "figma-plugin",
+    "flow-diagram",
+    "connectors",
+    "autoflow"
+  ],
+  "author": "YYC³ Team",
+  "license": "MIT",
+  "devDependencies": {
+    "@figma/plugin-typings": "^1.80.0",
+    "typescript": "^5.0.0"
+  }
+}

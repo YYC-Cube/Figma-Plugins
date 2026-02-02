@@ -1,0 +1,24 @@
+{
+  "name": "figma-figmotion",
+  "version": "1.0.0",
+  "description": "Figma Figmotion - 为Figma添加动画效果的插件",
+  "main": "code.js",
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc -w",
+    "dev": "tsc -w"
+  },
+  "keywords": [
+    "figma",
+    "figma-plugin",
+    "animation",
+    "motion",
+    "design"
+  ],
+  "author": "YYC³",
+  "license": "MIT",
+  "devDependencies": {
+    "@figma/plugin-typings": "^1.84.0",
+    "typescript": "^5.0.0"
+  }
+}

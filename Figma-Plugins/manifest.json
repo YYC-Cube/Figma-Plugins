@@ -1,0 +1,8 @@
+{
+  "name": "Figma Plugins Manager",
+  "id": "figma-plugins-manager",
+  "api": "1.0.0",
+  "main": "code.js",
+  "ui": "ui.html",
+  "permissions": ["document"]
+}

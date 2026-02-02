@@ -1,0 +1,16 @@
+{
+  "name": "Figma EX",
+  "id": "figma-ex",
+  "api": "1.0.0",
+  "main": "code.js",
+  "ui": "ui.html",
+  "menu": [
+    {
+      "name": "Figma EX",
+      "command": "show-ui"
+    }
+  ],
+  "permissions": [
+    "document"
+  ]
+}

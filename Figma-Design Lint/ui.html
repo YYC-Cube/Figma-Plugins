@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Design Lint</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background: #f5f5f5;
+      color: #333;
+      overflow: hidden;
+    }
+
+    .container {
+      width: 100%;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .header {
+      background: #215fa3;
+      color: white;
+      padding: 16px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .header h1 {
+      font-size: 18px;
+      font-weight: 600;
+    }
+
+    .header-actions {
+      display: flex;
+      gap: 10px;
+    }
+
+    .button {
+      padding: 8px 16px;
+      border: none;
+      border-radius: 4px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .button-primary {
+      background: #215fa3;
+      color: white;
+    }
+
+    .button-primary:hover {
+      background: #1a4d8a;
+    }
+
+    .button-secondary {
+      background: white;
+      color: #215fa3;
+      border: 1px solid #215fa3;
+    }
+
+    .button-secondary:hover {
+      background: #f0f7ff;
+    }
+
+    .button-danger {
+      background: #f44336;
+      color: white;
+    }
+
+    .button-danger:hover {
+      background: #d32f2f;
+    }
+
+    .button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .toolbar {
+      padding: 16px 20px;
+      background: white;
+      border-bottom: 1px solid #ddd;
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .issues-container {
+      flex: 1;
+      overflow-y: auto;
+      padding: 20px;
+    }
+
+    .summary {
+      background: white;
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 20px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+
+    .summary-item {
+      text-align: center;
+    }
+
+    .summary-value {
+      font-size: 24px;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .summary-label {
+      font-size: 12px;
+      color: #666;
+    }
+
+    .summary-errors {
+      color: #d32f2f;
+    }
+
+    .summary-warnings {
+      color: #f57c00;
+    }
+
+    .summary-infos {
+      color: #1976d2;
+    }
+
+    .issues-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .issue-item {
+      background: white;
+      border-radius: 8px;
+      padding: 16px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+      border-left: 4px solid;
+    }
+
+    .issue-item.error {
+      border-left-color: #d32f2f;
+    }
+
+    .issue-item.warning {
+      border-left-color: #f57c00;
+    }
+
+    .issue-item.info {
+      border-left-color: #1976d2;
+    }
+
+    .issue-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 8px;
+    }
+
+    .issue-title {
+      font-weight: 600;
+      font-size: 14px;
+    }
+
+    .issue-severity {
+      font-size: 12px;
+      padding: 2px 8px;
+      border-radius: 12px;
+      font-weight: 500;
+    }
+
+    .issue-severity.error {
+      background: #ffebee;
+      color: #d32f2f;
+    }
+
+    .issue-severity.warning {
+      background: #fff3e0;
+      color: #f57c00;
+    }
+
+    .issue-severity.info {
+      background: #e3f2fd;
+      color: #1976d2;
+    }
+
+    .issue-description {
+      font-size: 13px;
+      color: #666;
+      margin-bottom: 12px;
+    }
+
+    .issue-location {
+      font-size: 12px;
+      color: #999;
+      margin-bottom: 12px;
+    }
+
+    .issue-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .action-button {
+      padding: 6px 12px;
+      border: none;
+      border-radius: 4px;
+      font-size: 12px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .action-fix {
+      background: #4caf50;
+      color: white;
+    }
+
+    .action-fix:hover {
+      background: #45a049;
+    }
+
+    .action-ignore {
+      background: #f0f0f0;
+      color: #666;
+    }
+
+    .action-ignore:hover {
+      background: #e0e0e0;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: #666;
+    }
+
+    .empty-state-icon {
+      font-size: 64px;
+      margin-bottom: 16px;
+    }
+
+    .empty-state-text {
+      font-size: 16px;
+      margin-bottom: 8px;
+    }
+
+    .empty-state-subtext {
+      font-size: 14px;
+      color: #999;
+    }
+
+    .footer {
+      background: #f0f0f0;
+      padding: 12px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12px;
+      color: #666;
+      border-top: 1px solid #ddd;
+    }
+
+    .status-text {
+      font-weight: 500;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>Design Lint</h1>
+      <div class="header-actions">
+        <button class="button button-secondary" onclick="runLint()">Run Lint</button>
+        <button class="button button-secondary" onclick="runLintSelection()">Lint Selection</button>
+        <button class="button button-danger" onclick="clearIssues()">Clear Issues</button>
+      </div>
+    </div>
+
+    <div class="content">
+      <div class="toolbar">
+        <button class="button button-primary" onclick="fixAllIssues()">Fix All Issues</button>
+        <div id="selection-info">
+          <span class="selection-count">0</span> elements selected
+        </div>
+      </div>
+
+      <div class="issues-container">
+        <div id="summary" class="summary hidden">
+          <div class="summary-item">
+            <div class="summary-value summary-errors" id="summary-errors">0</div>
+            <div class="summary-label">Errors</div>
+          </div>
+          <div class="summary-item">
+            <div class="summary-value summary-warnings" id="summary-warnings">0</div>
+            <div class="summary-label">Warnings</div>
+          </div>
+          <div class="summary-item">
+            <div class="summary-value summary-infos" id="summary-infos">0</div>
+            <div class="summary-label">Infos</div>
+          </div>
+        </div>
+
+        <div id="issues-list" class="issues-list hidden"></div>
+
+        <div id="empty-state" class="empty-state">
+          <div class="empty-state-icon">🔍</div>
+          <div class="empty-state-text">No issues found</div>
+          <div class="empty-state-subtext">Run lint to check your design for issues</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer">
+      <span class="status-text" id="status-text">Ready</span>
+      <span>Design Lint v1.0.0</span>
+    </div>
+  </div>
+
+  <script>
+    function runLint() {
+      parent.postMessage({ pluginMessage: { type: 'run-lint' } }, '*');
+      updateStatus('Running lint...');
+    }
+
+    function runLintSelection() {
+      parent.postMessage({ pluginMessage: { type: 'run-lint-selection' } }, '*');
+      updateStatus('Running lint on selection...');
+    }
+
+    function fixIssue(issueId) {
+      parent.postMessage({ pluginMessage: { type: 'fix-issue', data: { issueId } } }, '*');
+    }
+
+    function fixAllIssues() {
+      parent.postMessage({ pluginMessage: { type: 'fix-all' } }, '*');
+      updateStatus('Fixing all issues...');
+    }
+
+    function ignoreIssue(issueId) {
+      parent.postMessage({ pluginMessage: { type: 'ignore-issue', data: { issueId } } }, '*');
+    }
+
+    function clearIssues() {
+      parent.postMessage({ pluginMessage: { type: 'clear-issues' } }, '*');
+      updateStatus('Clearing issues...');
+    }
+
+    function updateStatus(text) {
+      document.getElementById('status-text').textContent = text;
+    }
+
+    function displayIssues(issues) {
+      const issuesList = document.getElementById('issues-list');
+      const emptyState = document.getElementById('empty-state');
+      const summary = document.getElementById('summary');
+
+      if (issues.length === 0) {
+        issuesList.classList.add('hidden');
+        summary.classList.add('hidden');
+        emptyState.classList.remove('hidden');
+        return;
+      }
+
+      issuesList.classList.remove('hidden');
+      summary.classList.remove('hidden');
+      emptyState.classList.add('hidden');
+
+      // Update summary
+      const errors = issues.filter(i => i.severity === 'error').length;
+      const warnings = issues.filter(i => i.severity === 'warning').length;
+      const infos = issues.filter(i => i.severity === 'info').length;
+
+      document.getElementById('summary-errors').textContent = errors;
+      document.getElementById('summary-warnings').textContent = warnings;
+      document.getElementById('summary-infos').textContent = infos;
+
+      // Update issues list
+      issuesList.innerHTML = '';
+
+      issues.forEach(issue => {
+        const issueItem = document.createElement('div');
+        issueItem.className = `issue-item ${issue.severity}`;
+        issueItem.innerHTML = `
+          <div class="issue-header">
+            <div class="issue-title">${issue.message}</div>
+            <span class="issue-severity ${issue.severity}">${issue.severity.toUpperCase()}</span>
+          </div>
+          <div class="issue-description">${issue.description}</div>
+          <div class="issue-location">
+            Layer: ${issue.nodeName} (${issue.location.x.toFixed(1)}, ${issue.location.y.toFixed(1)})
+          </div>
+          <div class="issue-actions">
+            <button class="action-button action-fix" onclick="fixIssue('${issue.id}')">Fix</button>
+            <button class="action-button action-ignore" onclick="ignoreIssue('${issue.id}')">Ignore</button>
+          </div>
+        `;
+        issuesList.appendChild(issueItem);
+      });
+    }
+
+    window.onmessage = (event) => {
+      const msg = event.data.pluginMessage || event.data;
+
+      switch (msg.type) {
+        case 'lint-complete':
+          displayIssues(msg.data.issues);
+          updateStatus('Lint completed');
+          break;
+
+        case 'issue-fixed':
+          // Update UI for fixed issue
+          updateStatus('Issue fixed');
+          break;
+
+        case 'all-issues-fixed':
+          updateStatus(`Fixed ${msg.data.count} issues`);
+          break;
+
+        case 'issue-ignored':
+          // Update UI for ignored issue
+          updateStatus('Issue ignored');
+          break;
+
+        case 'issues-cleared':
+          displayIssues([]);
+          updateStatus('Issues cleared');
+          break;
+
+        case 'selection-changed':
+          document.querySelector('.selection-count').textContent = msg.data.count;
+          break;
+      }
+    };
+  </script>
+</body>
+</html>

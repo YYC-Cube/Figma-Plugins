@@ -1,0 +1,16 @@
+{
+  "name": "Figma Grid Guide",
+  "id": "figma-grid-guide",
+  "api": "1.0.0",
+  "main": "code.js",
+  "ui": "ui.html",
+  "menu": [
+    {
+      "name": "Grid Guide",
+      "command": "show-ui"
+    }
+  ],
+  "permissions": [
+    "document"
+  ]
+}

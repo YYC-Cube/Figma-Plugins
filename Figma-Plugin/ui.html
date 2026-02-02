@@ -1,0 +1,974 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PostgreSQL Data Manager</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background: #f5f5f5;
+      color: #333;
+      overflow: hidden;
+    }
+
+    .container {
+      width: 100%;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .header {
+      background: #215fa3;
+      color: white;
+      padding: 16px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .header h1 {
+      font-size: 18px;
+      font-weight: 600;
+    }
+
+    .header-actions {
+      display: flex;
+      gap: 10px;
+    }
+
+    .content {
+      flex: 1;
+      display: flex;
+      overflow: hidden;
+    }
+
+    .sidebar {
+      width: 200px;
+      background: white;
+      border-right: 1px solid #ddd;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .sidebar-item {
+      padding: 12px 20px;
+      cursor: pointer;
+      transition: background 0.2s;
+      font-size: 14px;
+      border-left: 3px solid transparent;
+    }
+
+    .sidebar-item:hover {
+      background: #f0f7ff;
+    }
+
+    .sidebar-item.active {
+      background: #e3f2fd;
+      border-left-color: #215fa3;
+      font-weight: 500;
+    }
+
+    .main-content {
+      flex: 1;
+      padding: 20px;
+      overflow-y: auto;
+    }
+
+    .tab-content {
+      display: none;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    .card {
+      background: white;
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+
+    .card h2 {
+      font-size: 16px;
+      margin-bottom: 16px;
+      color: #215fa3;
+    }
+
+    .toolbar {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+
+    .button {
+      padding: 8px 16px;
+      border: none;
+      border-radius: 4px;
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-weight: 500;
+    }
+
+    .button-primary {
+      background: #215fa3;
+      color: white;
+    }
+
+    .button-primary:hover {
+      background: #1a4d8a;
+    }
+
+    .button-secondary {
+      background: white;
+      color: #215fa3;
+      border: 1px solid #215fa3;
+    }
+
+    .button-secondary:hover {
+      background: #f0f7ff;
+    }
+
+    .button-success {
+      background: #4caf50;
+      color: white;
+    }
+
+    .button-success:hover {
+      background: #45a049;
+    }
+
+    .button-danger {
+      background: #f44336;
+      color: white;
+    }
+
+    .button-danger:hover {
+      background: #d32f2f;
+    }
+
+    .button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .form-group {
+      margin-bottom: 16px;
+    }
+
+    .form-label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 500;
+      font-size: 14px;
+      color: #333;
+    }
+
+    .form-input {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 14px;
+      transition: border-color 0.2s;
+    }
+
+    .form-input:focus {
+      outline: none;
+      border-color: #215fa3;
+    }
+
+    .form-textarea {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 14px;
+      min-height: 100px;
+      resize: vertical;
+      font-family: inherit;
+    }
+
+    .form-textarea:focus {
+      outline: none;
+      border-color: #215fa3;
+    }
+
+    .schema-info {
+      background: #e3f2fd;
+      padding: 16px;
+      border-radius: 4px;
+      margin-bottom: 20px;
+    }
+
+    .schema-name {
+      font-size: 20px;
+      font-weight: 600;
+      color: #215fa3;
+      margin-bottom: 8px;
+    }
+
+    .schema-meta {
+      font-size: 12px;
+      color: #666;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .stat-item {
+      background: white;
+      padding: 16px;
+      border-radius: 8px;
+      text-align: center;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+
+    .stat-value {
+      font-size: 32px;
+      font-weight: 700;
+      color: #215fa3;
+    }
+
+    .stat-label {
+      font-size: 12px;
+      color: #666;
+      margin-top: 4px;
+    }
+
+    .version-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .version-item {
+      background: white;
+      border-radius: 8px;
+      padding: 16px;
+      border-left: 4px solid #215fa3;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+
+    .version-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .version-name {
+      font-weight: 600;
+      font-size: 14px;
+    }
+
+    .version-date {
+      font-size: 12px;
+      color: #666;
+    }
+
+    .version-description {
+      font-size: 13px;
+      color: #666;
+      margin-bottom: 12px;
+    }
+
+    .version-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: #666;
+    }
+
+    .empty-state-icon {
+      font-size: 64px;
+      margin-bottom: 16px;
+    }
+
+    .empty-state-text {
+      font-size: 16px;
+      margin-bottom: 8px;
+    }
+
+    .empty-state-subtext {
+      font-size: 14px;
+      color: #999;
+    }
+
+    .loading {
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      border: 2px solid #f3f3f3;
+      border-top: 2px solid #215fa3;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin-right: 8px;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .footer {
+      background: #f0f0f0;
+      padding: 12px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12px;
+      color: #666;
+      border-top: 1px solid #ddd;
+    }
+
+    .modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.5);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+
+    .modal-content {
+      background: white;
+      border-radius: 8px;
+      padding: 24px;
+      max-width: 500px;
+      width: 90%;
+      max-height: 80vh;
+      overflow-y: auto;
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .modal-title {
+      font-size: 18px;
+      font-weight: 600;
+    }
+
+    .modal-close {
+      background: none;
+      border: none;
+      font-size: 24px;
+      cursor: pointer;
+      color: #666;
+    }
+
+    .modal-close:hover {
+      color: #333;
+    }
+
+    .selection-info {
+      background: #e3f2fd;
+      padding: 12px;
+      border-radius: 4px;
+      margin-bottom: 16px;
+      font-size: 14px;
+    }
+
+    .selection-count {
+      font-weight: 600;
+      color: #215fa3;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>PostgreSQL Data Manager</h1>
+      <div class="header-actions">
+        <button class="button button-secondary" onclick="closePlugin()">Close</button>
+      </div>
+    </div>
+
+    <div class="content">
+      <div class="sidebar">
+        <div class="sidebar-item active" onclick="switchTab('schema')">Schema</div>
+        <div class="sidebar-item" onclick="switchTab('versions')">Versions</div>
+        <div class="sidebar-item" onclick="switchTab('import')">Import</div>
+        <div class="sidebar-item" onclick="switchTab('export')">Export</div>
+        <div class="sidebar-item" onclick="switchTab('validate')">Validate</div>
+        <div class="sidebar-item" onclick="switchTab('settings')">Settings</div>
+      </div>
+
+      <div class="main-content">
+        <div id="selection-info" class="selection-info hidden">
+          <span class="selection-count">0</span> elements selected
+        </div>
+
+        <div id="tab-schema" class="tab-content active">
+          <div class="card">
+            <h2>Schema Information</h2>
+            <div id="schema-info" class="schema-info hidden">
+              <div class="schema-name" id="schema-name">Untitled Schema</div>
+              <div class="schema-meta">
+                <div>Version: <span id="schema-version">1.0.0</span></div>
+                <div>Created: <span id="schema-created">-</span></div>
+                <div>Updated: <span id="schema-updated">-</span></div>
+              </div>
+            </div>
+            <div id="schema-empty" class="empty-state">
+              <div class="empty-state-icon">📊</div>
+              <div class="empty-state-text">No schema loaded</div>
+              <div class="empty-state-subtext">Select a design element or import a schema</div>
+            </div>
+          </div>
+
+          <div class="card">
+            <h2>Schema Statistics</h2>
+            <div class="stats-grid">
+              <div class="stat-item">
+                <div class="stat-value" id="stat-tables">0</div>
+                <div class="stat-label">Tables</div>
+              </div>
+              <div class="stat-item">
+                <div class="stat-value" id="stat-columns">0</div>
+                <div class="stat-label">Columns</div>
+              </div>
+              <div class="stat-item">
+                <div class="stat-value" id="stat-relations">0</div>
+                <div class="stat-label">Relations</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <h2>Schema Actions</h2>
+            <div class="toolbar">
+              <button class="button button-primary" onclick="loadSchema()">Load Schema</button>
+              <button class="button button-success" onclick="showSaveModal()">Save Schema</button>
+              <button class="button button-secondary" onclick="validateSchema()">Validate</button>
+              <button class="button button-secondary" onclick="visualizeSchema()">Visualize</button>
+            </div>
+          </div>
+        </div>
+
+        <div id="tab-versions" class="tab-content">
+          <div class="card">
+            <h2>Schema Versions</h2>
+            <div class="toolbar">
+              <button class="button button-primary" onclick="showCreateVersionModal()">Create Version</button>
+              <button class="button button-secondary" onclick="listVersions()">Refresh</button>
+            </div>
+            <div id="version-list" class="version-list"></div>
+            <div id="versions-empty" class="empty-state">
+              <div class="empty-state-icon">📦</div>
+              <div class="empty-state-text">No versions yet</div>
+              <div class="empty-state-subtext">Create your first schema version</div>
+            </div>
+          </div>
+        </div>
+
+        <div id="tab-import" class="tab-content">
+          <div class="card">
+            <h2>Import Schema</h2>
+            <div class="form-group">
+              <label class="form-label">Import Format</label>
+              <select class="form-input" id="import-format">
+                <option value="sql">SQL</option>
+                <option value="json">JSON</option>
+                <option value="prisma">Prisma</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Schema Content</label>
+              <textarea class="form-textarea" id="import-content" placeholder="Paste your schema content here..."></textarea>
+            </div>
+            <div class="toolbar">
+              <button class="button button-primary" onclick="importSchema()">Import Schema</button>
+              <button class="button button-secondary" onclick="loadFromFile()">Load from File</button>
+            </div>
+          </div>
+        </div>
+
+        <div id="tab-export" class="tab-content">
+          <div class="card">
+            <h2>Export Schema</h2>
+            <div class="form-group">
+              <label class="form-label">Export Format</label>
+              <select class="form-input" id="export-format">
+                <option value="sql">SQL</option>
+                <option value="json">JSON</option>
+                <option value="prisma">Prisma</option>
+              </select>
+            </div>
+            <div class="toolbar">
+              <button class="button button-primary" onclick="exportSchema()">Export Schema</button>
+            </div>
+          </div>
+        </div>
+
+        <div id="tab-validate" class="tab-content">
+          <div class="card">
+            <h2>Schema Validation</h2>
+            <div class="toolbar">
+              <button class="button button-primary" onclick="validateSchema()">Run Validation</button>
+            </div>
+            <div id="validation-results"></div>
+          </div>
+        </div>
+
+        <div id="tab-settings" class="tab-content">
+          <div class="card">
+            <h2>Settings</h2>
+            <div class="form-group">
+              <label class="form-label">Default Export Format</label>
+              <select class="form-input" id="setting-export-format">
+                <option value="sql">SQL</option>
+                <option value="json">JSON</option>
+                <option value="prisma">Prisma</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Auto-save Schema</label>
+              <select class="form-input" id="setting-autosave">
+                <option value="true">Yes</option>
+                <option value="false">No</option>
+              </select>
+            </div>
+            <div class="toolbar">
+              <button class="button button-primary" onclick="saveSettings()">Save Settings</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer">
+      <span id="status-text">Ready</span>
+      <span>PostgreSQL Data Manager v1.0.0</span>
+    </div>
+  </div>
+
+  <div id="modal-save" class="modal hidden">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div class="modal-title">Save Schema</div>
+        <button class="modal-close" onclick="closeModal('modal-save')">&times;</button>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Schema Name</label>
+        <input type="text" class="form-input" id="save-name" placeholder="Enter schema name...">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Version</label>
+        <input type="text" class="form-input" id="save-version" placeholder="1.0.0">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Description</label>
+        <textarea class="form-textarea" id="save-description" placeholder="Enter schema description..."></textarea>
+      </div>
+      <div class="toolbar">
+        <button class="button button-primary" onclick="confirmSaveSchema()">Save</button>
+        <button class="button button-secondary" onclick="closeModal('modal-save')">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="modal-version" class="modal hidden">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div class="modal-title">Create Version</div>
+        <button class="modal-close" onclick="closeModal('modal-version')">&times;</button>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Version Name</label>
+        <input type="text" class="form-input" id="version-name" placeholder="Enter version name...">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Description</label>
+        <textarea class="form-textarea" id="version-description" placeholder="Enter version description..."></textarea>
+      </div>
+      <div class="toolbar">
+        <button class="button button-primary" onclick="confirmCreateVersion()">Create</button>
+        <button class="button button-secondary" onclick="closeModal('modal-version')">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let currentSchema = null;
+    let currentVersions = [];
+
+    function switchTab(tabId) {
+      document.querySelectorAll('.sidebar-item').forEach(item => {
+        item.classList.remove('active');
+      });
+      document.querySelectorAll('.tab-content').forEach(content => {
+        content.classList.remove('active');
+      });
+      
+      document.querySelector(`[onclick="switchTab('${tabId}')"]`).classList.add('active');
+      document.getElementById(`tab-${tabId}`).classList.add('active');
+    }
+
+    function updateStatus(text) {
+      document.getElementById('status-text').textContent = text;
+    }
+
+    function showSchemaInfo(schema) {
+      currentSchema = schema;
+      
+      document.getElementById('schema-info').classList.remove('hidden');
+      document.getElementById('schema-empty').classList.add('hidden');
+      
+      document.getElementById('schema-name').textContent = schema.name || 'Untitled Schema';
+      document.getElementById('schema-version').textContent = schema.version || '1.0.0';
+      document.getElementById('schema-created').textContent = new Date(schema.metadata?.createdAt).toLocaleString();
+      document.getElementById('schema-updated').textContent = new Date(schema.metadata?.updatedAt).toLocaleString();
+      
+      document.getElementById('stat-tables').textContent = schema.tables?.length || 0;
+      document.getElementById('stat-columns').textContent = schema.tables?.reduce((sum, t) => sum + (t.columns?.length || 0), 0) || 0;
+      document.getElementById('stat-relations').textContent = schema.relations?.length || 0;
+    }
+
+    function hideSchemaInfo() {
+      currentSchema = null;
+      document.getElementById('schema-info').classList.add('hidden');
+      document.getElementById('schema-empty').classList.remove('hidden');
+      
+      document.getElementById('stat-tables').textContent = '0';
+      document.getElementById('stat-columns').textContent = '0';
+      document.getElementById('stat-relations').textContent = '0';
+    }
+
+    function showSaveModal() {
+      if (!currentSchema) {
+        alert('No schema to save.');
+        return;
+      }
+      document.getElementById('modal-save').classList.remove('hidden');
+      document.getElementById('save-name').value = currentSchema.name || '';
+      document.getElementById('save-version').value = currentSchema.version || '1.0.0';
+      document.getElementById('save-description').value = currentSchema.metadata?.description || '';
+    }
+
+    function showCreateVersionModal() {
+      if (!currentSchema) {
+        alert('No schema to version.');
+        return;
+      }
+      document.getElementById('modal-version').classList.remove('hidden');
+      document.getElementById('version-name').value = '';
+      document.getElementById('version-description').value = '';
+    }
+
+    function closeModal(modalId) {
+      document.getElementById(modalId).classList.add('hidden');
+    }
+
+    function loadSchema() {
+      parent.postMessage({ pluginMessage: { type: 'load-schema' } }, '*');
+    }
+
+    function confirmSaveSchema() {
+      const name = document.getElementById('save-name').value;
+      const version = document.getElementById('save-version').value;
+      const description = document.getElementById('save-description').value;
+      
+      if (!name) {
+        alert('Please enter a schema name.');
+        return;
+      }
+      
+      parent.postMessage({ pluginMessage: { type: 'save-schema', data: { name, version, description } } }, '*');
+      closeModal('modal-save');
+    }
+
+    function confirmCreateVersion() {
+      const name = document.getElementById('version-name').value;
+      const description = document.getElementById('version-description').value;
+      
+      if (!name) {
+        alert('Please enter a version name.');
+        return;
+      }
+      
+      parent.postMessage({ pluginMessage: { type: 'create-version', name, description } }, '*');
+      closeModal('modal-version');
+    }
+
+    function listVersions() {
+      parent.postMessage({ pluginMessage: { type: 'list-versions' } }, '*');
+    }
+
+    function loadVersion(versionId) {
+      parent.postMessage({ pluginMessage: { type: 'load-version', versionId } }, '*');
+    }
+
+    function deleteVersion(versionId) {
+      if (confirm('Are you sure you want to delete this version?')) {
+        parent.postMessage({ pluginMessage: { type: 'delete-version', versionId } }, '*');
+      }
+    }
+
+    function compareVersions(versionId1, versionId2) {
+      parent.postMessage({ pluginMessage: { type: 'compare-versions', versionId1, versionId2 } }, '*');
+    }
+
+    function mergeVersions(versionId1, versionId2) {
+      const name = prompt('Enter name for merged schema:');
+      if (name) {
+        parent.postMessage({ pluginMessage: { type: 'merge-versions', versionId1, versionId2, name } }, '*');
+      }
+    }
+
+    function importSchema() {
+      const format = document.getElementById('import-format').value;
+      const content = document.getElementById('import-content').value;
+      
+      if (!content.trim()) {
+        alert('Please enter schema content.');
+        return;
+      }
+      
+      parent.postMessage({ pluginMessage: { type: 'import-schema', format, content } }, '*');
+    }
+
+    function loadFromFile() {
+      const input = document.createElement('input');
+      input.type = 'file';
+      input.accept = '.sql,.json,.prisma';
+      
+      input.onchange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+          const reader = new FileReader();
+          reader.onload = (event) => {
+            const content = event.target.result;
+            document.getElementById('import-content').value = content;
+          };
+          reader.readAsText(file);
+        }
+      };
+      
+      input.click();
+    }
+
+    function exportSchema() {
+      const format = document.getElementById('export-format').value;
+      parent.postMessage({ pluginMessage: { type: 'export-schema', format } }, '*');
+    }
+
+    function validateSchema() {
+      parent.postMessage({ pluginMessage: { type: 'validate-schema' } }, '*');
+    }
+
+    function visualizeSchema() {
+      parent.postMessage({ pluginMessage: { type: 'visualize-schema' } }, '*');
+    }
+
+    function saveSettings() {
+      const exportFormat = document.getElementById('setting-export-format').value;
+      const autoSave = document.getElementById('setting-autosave').value === 'true';
+      
+      parent.postMessage({ pluginMessage: { type: 'save-config', config: { exportFormat, autoSave } } }, '*');
+    }
+
+    function closePlugin() {
+      parent.postMessage({ pluginMessage: { type: 'close' } }, '*');
+    }
+
+    function displayVersions(versions) {
+      currentVersions = versions;
+      const container = document.getElementById('version-list');
+      const emptyState = document.getElementById('versions-empty');
+      
+      container.innerHTML = '';
+      
+      if (versions.length === 0) {
+        emptyState.classList.remove('hidden');
+        return;
+      }
+      
+      emptyState.classList.add('hidden');
+      
+      versions.forEach(version => {
+        const div = document.createElement('div');
+        div.className = 'version-item';
+        div.innerHTML = `
+          <div class="version-header">
+            <span class="version-name">${version.name}</span>
+            <span class="version-date">${new Date(version.createdAt).toLocaleString()}</span>
+          </div>
+          <div class="version-description">${version.description || 'No description'}</div>
+          <div class="version-actions">
+            <button class="button button-primary" onclick="loadVersion('${version.id}')">Load</button>
+            <button class="button button-danger" onclick="deleteVersion('${version.id}')">Delete</button>
+          </div>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    window.onmessage = (event) => {
+      const msg = event.data.pluginMessage || event.data;
+      
+      switch (msg.type) {
+        case 'selection-changed':
+          const selectionInfo = document.getElementById('selection-info');
+          const countEl = selectionInfo.querySelector('.selection-count');
+          countEl.textContent = msg.data.count;
+          
+          if (msg.data.hasSchema) {
+            showSchemaInfo(msg.data);
+          } else {
+            hideSchemaInfo();
+          }
+          
+          if (msg.data.count > 0) {
+            selectionInfo.classList.remove('hidden');
+          } else {
+            selectionInfo.classList.add('hidden');
+          }
+          break;
+          
+        case 'schema-loaded':
+          showSchemaInfo(msg.data);
+          updateStatus('Schema loaded');
+          break;
+          
+        case 'schema-saved':
+          showSchemaInfo(msg.data);
+          updateStatus('Schema saved');
+          break;
+          
+        case 'schema-imported':
+          showSchemaInfo(msg.data);
+          updateStatus('Schema imported');
+          break;
+          
+        case 'version-created':
+          listVersions();
+          updateStatus('Version created');
+          break;
+          
+        case 'version-loaded':
+          showSchemaInfo(msg.data.schema);
+          updateStatus('Version loaded');
+          break;
+          
+        case 'version-deleted':
+          listVersions();
+          updateStatus('Version deleted');
+          break;
+          
+        case 'versions-listed':
+          displayVersions(msg.data);
+          updateStatus('Versions listed');
+          break;
+          
+        case 'validation-complete':
+          displayValidationResults(msg.data);
+          updateStatus('Validation complete');
+          break;
+          
+        case 'export-ready':
+          const { content, filename } = msg.data;
+          const blob = new Blob([content], { type: 'text/plain' });
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = filename;
+          a.click();
+          URL.revokeObjectURL(url);
+          updateStatus('Export complete');
+          break;
+          
+        case 'schema-error':
+          alert(msg.data.message);
+          updateStatus('Error occurred');
+          break;
+      }
+    };
+
+    function displayValidationResults(results) {
+      const container = document.getElementById('validation-results');
+      container.innerHTML = `
+        <div style="padding: 16px; background: #e3f2fd; border-radius: 4px; margin-bottom: 16px;">
+          <strong>Score:</strong> ${results.score}/100
+        </div>
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 16px;">
+          <div style="text-align: center; padding: 12px; background: #ffebee; border-radius: 4px;">
+            <div style="font-size: 24px; font-weight: 700; color: #d32f2f;">${results.summary.errors}</div>
+            <div style="font-size: 12px; color: #666;">Errors</div>
+          </div>
+          <div style="text-align: center; padding: 12px; background: #fff3e0; border-radius: 4px;">
+            <div style="font-size: 24px; font-weight: 700; color: #f57c00;">${results.summary.warnings}</div>
+            <div style="font-size: 12px; color: #666;">Warnings</div>
+          </div>
+          <div style="text-align: center; padding: 12px; background: #e3f2fd; border-radius: 4px;">
+            <div style="font-size: 24px; font-weight: 700; color: #1976d2;">${results.summary.infos}</div>
+            <div style="font-size: 12px; color: #666;">Infos</div>
+          </div>
+        </div>
+      `;
+      
+      if (results.issues.length > 0) {
+        const issuesDiv = document.createElement('div');
+        issuesDiv.style.marginTop = '16px';
+        results.issues.forEach(issue => {
+          const issueDiv = document.createElement('div');
+          issueDiv.style.padding = '12px';
+          issueDiv.style.marginBottom = '8px';
+          issueDiv.style.borderRadius = '4px';
+          issueDiv.style.borderLeft = '4px solid';
+          
+          if (issue.severity === 'error') {
+            issueDiv.style.background = '#ffebee';
+            issueDiv.style.borderLeftColor = '#d32f2f';
+          } else if (issue.severity === 'warning') {
+            issueDiv.style.background = '#fff3e0';
+            issueDiv.style.borderLeftColor = '#f57c00';
+          } else {
+            issueDiv.style.background = '#e3f2fd';
+            issueDiv.style.borderLeftColor = '#1976d2';
+          }
+          
+          issueDiv.innerHTML = `
+            <strong>${issue.code}</strong>: ${issue.message}<br>
+            <small>${issue.description}</small>
+          `;
+          issuesDiv.appendChild(issueDiv);
+        });
+        container.appendChild(issuesDiv);
+      }
+    }
+  </script>
+</body>
+</html>

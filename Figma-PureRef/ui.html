@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Figma PureRef</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background-color: #f5f5f5;
+      color: #1a1a1a;
+      line-height: 1.6;
+    }
+
+    .container {
+      padding: 20px;
+    }
+
+    h1 {
+      font-size: 20px;
+      font-weight: 600;
+      margin-bottom: 20px;
+      color: #1a1a1a;
+    }
+
+    h2 {
+      font-size: 16px;
+      font-weight: 600;
+      margin: 20px 0 10px;
+      color: #333333;
+    }
+
+    .section {
+      background-color: white;
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 16px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+
+    .btn {
+      background-color: #0066cc;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      padding: 8px 16px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background-color 0.2s;
+      margin-right: 8px;
+      margin-bottom: 8px;
+    }
+
+    .btn:hover {
+      background-color: #0052a3;
+    }
+
+    .btn-secondary {
+      background-color: #666666;
+    }
+
+    .btn-secondary:hover {
+      background-color: #525252;
+    }
+
+    .btn-danger {
+      background-color: #dc3545;
+    }
+
+    .btn-danger:hover {
+      background-color: #c82333;
+    }
+
+    .btn-sm {
+      padding: 6px 12px;
+      font-size: 12px;
+    }
+
+    .cleanup-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 12px;
+      margin-top: 12px;
+    }
+
+    .cleanup-card {
+      background-color: #f9f9f9;
+      border: 1px solid #e0e0e0;
+      border-radius: 6px;
+      padding: 12px;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .cleanup-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      border-color: #0066cc;
+    }
+
+    .cleanup-name {
+      font-weight: 600;
+      font-size: 14px;
+      margin-bottom: 4px;
+    }
+
+    .cleanup-description {
+      font-size: 12px;
+      color: #666666;
+      margin-bottom: 8px;
+    }
+
+    .severity-badge {
+      font-size: 11px;
+      font-weight: 500;
+      padding: 2px 8px;
+      border-radius: 10px;
+      display: inline-block;
+    }
+
+    .severity-low {
+      background-color: #e8f5e8;
+      color: #2e7d32;
+    }
+
+    .severity-medium {
+      background-color: #fff3e0;
+      color: #ef6c00;
+    }
+
+    .severity-high {
+      background-color: #ffebee;
+      color: #c62828;
+    }
+
+    .refactor-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 12px;
+      margin-top: 12px;
+    }
+
+    .refactor-card {
+      background-color: #f9f9f9;
+      border: 1px solid #e0e0e0;
+      border-radius: 6px;
+      padding: 12px;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .refactor-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      border-color: #0066cc;
+    }
+
+    .refactor-name {
+      font-weight: 600;
+      font-size: 14px;
+      margin-bottom: 4px;
+    }
+
+    .refactor-description {
+      font-size: 12px;
+      color: #666666;
+    }
+
+    .button-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 12px 0;
+    }
+
+    .status-message {
+      background-color: #e3f2fd;
+      color: #1976d2;
+      border-radius: 4px;
+      padding: 12px;
+      margin: 10px 0;
+      font-size: 14px;
+    }
+
+    .error-message {
+      background-color: #ffebee;
+      color: #c62828;
+      border-radius: 4px;
+      padding: 12px;
+      margin: 10px 0;
+      font-size: 14px;
+    }
+
+    .loading {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      color: #666666;
+    }
+
+    .spinner {
+      border: 2px solid #f3f3f3;
+      border-top: 2px solid #0066cc;
+      border-radius: 50%;
+      width: 16px;
+      height: 16px;
+      animation: spin 1s linear infinite;
+      margin-right: 8px;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+      gap: 12px;
+      margin-top: 12px;
+    }
+
+    .stat-item {
+      background-color: #f9f9f9;
+      border-radius: 6px;
+      padding: 12px;
+      text-align: center;
+    }
+
+    .stat-value {
+      font-size: 24px;
+      font-weight: 600;
+      color: #0066cc;
+      margin-bottom: 4px;
+    }
+
+    .stat-label {
+      font-size: 12px;
+      color: #666666;
+    }
+
+    .issue-list {
+      margin-top: 12px;
+    }
+
+    .issue-item {
+      background-color: #f9f9f9;
+      border-radius: 4px;
+      padding: 12px;
+      margin-bottom: 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .issue-info {
+      flex: 1;
+    }
+
+    .issue-type {
+      font-weight: 500;
+      font-size: 14px;
+      margin-bottom: 4px;
+    }
+
+    .issue-count {
+      font-size: 12px;
+      color: #666666;
+    }
+
+    .recommendation-list {
+      margin-top: 12px;
+    }
+
+    .recommendation-item {
+      background-color: #f0f0f0;
+      border-radius: 4px;
+      padding: 10px 12px;
+      margin-bottom: 8px;
+      font-size: 13px;
+      display: flex;
+      align-items: flex-start;
+    }
+
+    .recommendation-item::before {
+      content: '💡';
+      margin-right: 8px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>✨ Figma PureRef</h1>
+    
+    <!-- 文件分析 -->
+    <div class="section">
+      <h2>文件分析</h2>
+      <button class="btn" onclick="analyzeFile()">分析当前文件</button>
+      <div id="analysis-results" style="margin-top: 16px;"></div>
+    </div>
+
+    <!-- 清理工具 -->
+    <div class="section">
+      <h2>清理工具</h2>
+      <p style="font-size: 13px; color: #666666; margin-bottom: 12px;">选择要执行的清理操作</p>
+      <div class="cleanup-grid" id="cleanup-types"></div>
+      <div class="button-group" style="margin-top: 16px;">
+        <button class="btn btn-danger" onclick="runCleanupAll()">执行全部清理</button>
+      </div>
+    </div>
+
+    <!-- 重构工具 -->
+    <div class="section">
+      <h2>重构工具</h2>
+      <p style="font-size: 13px; color: #666666; margin-bottom: 12px;">选择要执行的重构操作</p>
+      <div class="refactor-grid" id="refactor-options"></div>
+    </div>
+
+    <!-- 性能优化 -->
+    <div class="section">
+      <h2>性能优化</h2>
+      <button class="btn" onclick="optimizePerformance()">优化性能</button>
+      <div id="performance-results" style="margin-top: 16px;"></div>
+    </div>
+
+    <!-- 备份与恢复 -->
+    <div class="section">
+      <h2>备份与恢复</h2>
+      <div class="button-group">
+        <button class="btn" onclick="createBackup()">创建备份</button>
+        <button class="btn btn-secondary" onclick="restoreBackup()">恢复备份</button>
+      </div>
+    </div>
+
+    <!-- 操作结果 -->
+    <div class="section">
+      <h2>操作结果</h2>
+      <div id="operation-results"></div>
+    </div>
+  </div>
+
+  <script>
+    // 清理类型数据
+    const cleanupTypes = [
+      {
+        id: '1',
+        name: '空图层',
+        description: '删除所有空的图层和框架',
+        severity: 'low',
+        type: 'EMPTY_LAYERS'
+      },
+      {
+        id: '2',
+        name: '隐藏图层',
+        description: '删除所有隐藏的图层',
+        severity: 'medium',
+        type: 'HIDDEN_LAYERS'
+      },
+      {
+        id: '3',
+        name: '未使用组件',
+        description: '删除未被使用的组件',
+        severity: 'high',
+        type: 'UNUSED_COMPONENTS'
+      },
+      {
+        id: '4',
+        name: '重复样式',
+        description: '合并重复的样式',
+        severity: 'medium',
+        type: 'DUPLICATE_STYLES'
+      },
+      {
+        id: '5',
+        name: '孤立节点',
+        description: '删除没有父节点的孤立元素',
+        severity: 'low',
+        type: 'ORPHAN_NODES'
+      },
+      {
+        id: '6',
+        name: '零尺寸元素',
+        description: '删除宽高为0的元素',
+        severity: 'low',
+        type: 'ZERO_SIZE_ELEMENTS'
+      }
+    ];
+
+    // 重构选项数据
+    const refactorOptions = [
+      {
+        id: '1',
+        name: '重命名图层',
+        description: '根据类型和内容重命名图层',
+        type: 'RENAME_LAYERS'
+      },
+      {
+        id: '2',
+        name: '组织结构',
+        description: '按逻辑组织图层结构',
+        type: 'ORGANIZE_STRUCTURE'
+      },
+      {
+        id: '3',
+        name: '创建组件',
+        description: '将重复元素转换为组件',
+        type: 'CREATE_COMPONENTS'
+      },
+      {
+        id: '4',
+        name: '统一样式',
+        description: '统一相似元素的样式',
+        type: 'UNIFY_STYLES'
+      },
+      {
+        id: '5',
+        name: '优化图片',
+        description: '优化图片质量和尺寸',
+        type: 'OPTIMIZE_IMAGES'
+      },
+      {
+        id: '6',
+        name: '清理文本',
+        description: '清理文本样式和格式',
+        type: 'CLEANUP_TEXT'
+      }
+    ];
+
+    // 初始化页面
+    document.addEventListener('DOMContentLoaded', function() {
+      renderCleanupTypes();
+      renderRefactorOptions();
+    });
+
+    // 渲染清理类型
+    function renderCleanupTypes() {
+      const typesContainer = document.getElementById('cleanup-types');
+      typesContainer.innerHTML = cleanupTypes.map(type => `
+        <div class="cleanup-card" onclick="runCleanup('${type.type}')">
+          <div class="cleanup-name">${type.name}</div>
+          <div class="cleanup-description">${type.description}</div>
+          <div class="severity-badge severity-${type.severity}">${type.severity === 'high' ? '高' : type.severity === 'medium' ? '中' : '低'}优先级</div>
+        </div>
+      `).join('');
+    }
+
+    // 渲染重构选项
+    function renderRefactorOptions() {
+      const optionsContainer = document.getElementById('refactor-options');
+      optionsContainer.innerHTML = refactorOptions.map(option => `
+        <div class="refactor-card" onclick="applyRefactor('${option.type}')">
+          <div class="refactor-name">${option.name}</div>
+          <div class="refactor-description">${option.description}</div>
+        </div>
+      `).join('');
+    }
+
+    // 发送消息到插件代码
+    function sendMessage(type, data = {}) {
+      parent.postMessage({ pluginMessage: { type, ...data } }, '*');
+    }
+
+    // 分析文件
+    function analyzeFile() {
+      const resultsDiv = document.getElementById('analysis-results');
+      resultsDiv.innerHTML = '<div class="loading"><div class="spinner"></div>正在分析文件...</div>';
+      sendMessage('analyze-file');
+    }
+
+    // 运行清理
+    function runCleanup(cleanupType) {
+      const resultsDiv = document.getElementById('operation-results');
+      resultsDiv.innerHTML = '<div class="loading"><div class="spinner"></div>正在执行清理...</div>';
+      sendMessage('run-cleanup', { cleanupType });
+    }
+
+    // 运行全部清理
+    function runCleanupAll() {
+      const resultsDiv = document.getElementById('operation-results');
+      resultsDiv.innerHTML = '<div class="loading"><div class="spinner"></div>正在执行全部清理...</div>';
+      sendMessage('run-cleanup-all');
+    }
+
+    // 应用重构
+    function applyRefactor(refactorType) {
+      const resultsDiv = document.getElementById('operation-results');
+      resultsDiv.innerHTML = '<div class="loading"><div class="spinner"></div>正在应用重构...</div>';
+      sendMessage('apply-refactor', { refactorType });
+    }
+
+    // 优化性能
+    function optimizePerformance() {
+      const resultsDiv = document.getElementById('performance-results');
+      resultsDiv.innerHTML = '<div class="loading"><div class="spinner"></div>正在优化性能...</div>';
+      sendMessage('optimize-performance');
+    }
+
+    // 创建备份
+    function createBackup() {
+      const resultsDiv = document.getElementById('operation-results');
+      resultsDiv.innerHTML = '<div class="loading"><div class="spinner"></div>正在创建备份...</div>';
+      sendMessage('create-backup');
+    }
+
+    // 恢复备份
+    function restoreBackup() {
+      const resultsDiv = document.getElementById('operation-results');
+      resultsDiv.innerHTML = '<div class="loading"><div class="spinner"></div>正在恢复备份...</div>';
+      sendMessage('restore-backup');
+    }
+
+    // 处理来自插件代码的消息
+    onmessage = (event) => {
+      const { type, ...data } = event.data.pluginMessage;
+      
+      switch (type) {
+        case 'file-analyzed':
+          handleFileAnalyzed(data);
+          break;
+        case 'cleanup-completed':
+        case 'cleanup-all-completed':
+        case 'refactor-applied':
+        case 'backup-created':
+        case 'backup-restored':
+          handleStatusMessage(data.message);
+          break;
+        case 'performance-optimized':
+          handlePerformanceOptimized(data);
+          break;
+        case 'error':
+          handleErrorMessage(data.message);
+          break;
+      }
+    };
+
+    // 处理文件分析结果
+    function handleFileAnalyzed(data) {
+      const resultsDiv = document.getElementById('analysis-results');
+      const analysis = data.analysis;
+      
+      let html = `<div class="status-message">${data.message}</div>`;
+      
+      // 统计信息
+      html += '<h3 style="font-size: 14px; margin: 16px 0 8px;">文件统计:</h3>';
+      html += '<div class="stats-grid">';
+      html += `
+        <div class="stat-item">
+          <div class="stat-value">${analysis.totalLayers}</div>
+          <div class="stat-label">总图层数</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value">${analysis.totalComponents}</div>
+          <div class="stat-label">组件数</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value">${analysis.totalStyles}</div>
+          <div class="stat-label">样式数</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value">${analysis.totalImages}</div>
+          <div class="stat-label">图片数</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value">${analysis.fileSize}</div>
+          <div class="stat-label">文件大小</div>
+        </div>
+      `;
+      html += '</div>';
+      
+      // 问题列表
+      if (analysis.issues && analysis.issues.length > 0) {
+        html += '<h3 style="font-size: 14px; margin: 16px 0 8px;">发现的问题:</h3>';
+        html += '<div class="issue-list">';
+        analysis.issues.forEach(issue => {
+          const severityClass = issue.severity === 'high' ? 'severity-high' : issue.severity === 'medium' ? 'severity-medium' : 'severity-low';
+          html += `
+            <div class="issue-item">
+              <div class="issue-info">
+                <div class="issue-type">${issue.type}</div>
+                <div class="issue-count">${issue.count} 个</div>
+              </div>
+              <div class="severity-badge ${severityClass}">${issue.severity === 'high' ? '高' : issue.severity === 'medium' ? '中' : '低'}</div>
+            </div>
+          `;
+        });
+        html += '</div>';
+      }
+      
+      // 推荐建议
+      if (analysis.recommendations && analysis.recommendations.length > 0) {
+        html += '<h3 style="font-size: 14px; margin: 16px 0 8px;">推荐建议:</h3>';
+        html += '<div class="recommendation-list">';
+        analysis.recommendations.forEach(recommendation => {
+          html += `<div class="recommendation-item">${recommendation}</div>`;
+        });
+        html += '</div>';
+      }
+      
+      resultsDiv.innerHTML = html;
+    }
+
+    // 处理性能优化结果
+    function handlePerformanceOptimized(data) {
+      const resultsDiv = document.getElementById('performance-results');
+      const optimizations = data.optimizations;
+      
+      let html = `<div class="status-message">${data.message}</div>`;
+      html += '<h3 style="font-size: 14px; margin: 16px 0 8px;">优化结果:</h3>';
+      html += '<div class="stats-grid">';
+      html += `
+        <div class="stat-item">
+          <div class="stat-value">${optimizations.imagesOptimized}</div>
+          <div class="stat-label">优化图片</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value">${optimizations.stylesMerged}</div>
+          <div class="stat-label">合并样式</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value">${optimizations.layersSimplified}</div>
+          <div class="stat-label">简化图层</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value">${optimizations.memorySaved}</div>
+          <div class="stat-label">节省内存</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value">${optimizations.loadTimeImproved}</div>
+          <div class="stat-label">加载时间改善</div>
+        </div>
+      `;
+      html += '</div>';
+      
+      resultsDiv.innerHTML = html;
+    }
+
+    // 处理状态消息
+    function handleStatusMessage(message) {
+      const resultsDiv = document.getElementById('operation-results');
+      resultsDiv.innerHTML = `<div class="status-message">${message}</div>`;
+    }
+
+    // 处理错误消息
+    function handleErrorMessage(message) {
+      const resultsDiv = document.getElementById('operation-results');
+      resultsDiv.innerHTML = `<div class="error-message">${message}</div>`;
+    }
+  </script>
+</body>
+</html>

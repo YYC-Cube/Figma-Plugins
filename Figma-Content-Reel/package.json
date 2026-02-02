@@ -1,0 +1,16 @@
+{
+  "name": "figma-content-reel",
+  "version": "1.0.0",
+  "description": "Content Reel - Fill your designs with realistic data",
+  "main": "code.js",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "dev": "tsc -p tsconfig.json --watch"
+  },
+  "author": "YYC³",
+  "license": "MIT",
+  "devDependencies": {
+    "@figma/plugin-typings": "*",
+    "typescript": "^5.3.2"
+  }
+}

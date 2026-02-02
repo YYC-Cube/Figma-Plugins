@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Figma Magician</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background-color: #f5f5f5;
+      color: #1a1a1a;
+      line-height: 1.6;
+    }
+
+    .container {
+      padding: 20px;
+    }
+
+    h1 {
+      font-size: 20px;
+      font-weight: 600;
+      margin-bottom: 20px;
+      color: #1a1a1a;
+    }
+
+    h2 {
+      font-size: 16px;
+      font-weight: 600;
+      margin: 20px 0 10px;
+      color: #333333;
+    }
+
+    .section {
+      background-color: white;
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 16px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+
+    .btn {
+      background-color: #0066cc;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      padding: 8px 16px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background-color 0.2s;
+      margin-right: 8px;
+      margin-bottom: 8px;
+    }
+
+    .btn:hover {
+      background-color: #0052a3;
+    }
+
+    .btn-secondary {
+      background-color: #666666;
+    }
+
+    .btn-secondary:hover {
+      background-color: #525252;
+    }
+
+    .btn-sm {
+      padding: 6px 12px;
+      font-size: 12px;
+    }
+
+    .suggestion-item {
+      background-color: #f9f9f9;
+      border-radius: 4px;
+      padding: 12px;
+      margin-bottom: 8px;
+      border-left: 4px solid #0066cc;
+    }
+
+    .suggestion-title {
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .suggestion-description {
+      font-size: 13px;
+      color: #666666;
+      margin-bottom: 8px;
+    }
+
+    .suggestion-priority {
+      font-size: 11px;
+      font-weight: 500;
+      padding: 2px 8px;
+      border-radius: 10px;
+      display: inline-block;
+    }
+
+    .priority-high {
+      background-color: #ffebee;
+      color: #c62828;
+    }
+
+    .priority-medium {
+      background-color: #fff3e0;
+      color: #ef6c00;
+    }
+
+    .priority-low {
+      background-color: #e8f5e8;
+      color: #2e7d32;
+    }
+
+    .component-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .component-card {
+      background-color: #f9f9f9;
+      border-radius: 4px;
+      padding: 10px;
+      text-align: center;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .component-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .component-name {
+      font-size: 13px;
+      font-weight: 500;
+      margin-bottom: 4px;
+    }
+
+    .component-category {
+      font-size: 11px;
+      color: #666666;
+    }
+
+    .color-scheme-grid {
+      display: flex;
+      gap: 10px;
+      margin-top: 10px;
+      overflow-x: auto;
+      padding-bottom: 10px;
+    }
+
+    .color-scheme-card {
+      background-color: white;
+      border: 1px solid #e0e0e0;
+      border-radius: 4px;
+      padding: 10px;
+      min-width: 120px;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .color-scheme-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .color-scheme-name {
+      font-size: 13px;
+      font-weight: 500;
+      margin-bottom: 8px;
+      text-align: center;
+    }
+
+    .color-palette {
+      display: flex;
+      height: 40px;
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .color-swatch {
+      flex: 1;
+      height: 100%;
+    }
+
+    .token-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .token-item {
+      background-color: #f9f9f9;
+      border-radius: 4px;
+      padding: 10px;
+    }
+
+    .token-name {
+      font-size: 12px;
+      color: #666666;
+      margin-bottom: 4px;
+    }
+
+    .token-value {
+      font-size: 13px;
+      font-weight: 500;
+      font-family: 'Courier New', Courier, monospace;
+    }
+
+    .accessibility-issue {
+      background-color: #f9f9f9;
+      border-radius: 4px;
+      padding: 12px;
+      margin-bottom: 8px;
+    }
+
+    .issue-severity {
+      font-size: 11px;
+      font-weight: 500;
+      padding: 2px 8px;
+      border-radius: 10px;
+      display: inline-block;
+      margin-bottom: 4px;
+    }
+
+    .severity-high {
+      background-color: #ffebee;
+      color: #c62828;
+    }
+
+    .severity-medium {
+      background-color: #fff3e0;
+      color: #ef6c00;
+    }
+
+    .severity-low {
+      background-color: #e8f5e8;
+      color: #2e7d32;
+    }
+
+    .issue-description {
+      font-size: 13px;
+    }
+
+    .compliance-bar {
+      width: 100%;
+      height: 8px;
+      background-color: #e0e0e0;
+      border-radius: 4px;
+      overflow: hidden;
+      margin: 10px 0;
+    }
+
+    .compliance-fill {
+      height: 100%;
+      background-color: #4caf50;
+      transition: width 0.5s ease;
+    }
+
+    .compliance-text {
+      font-size: 13px;
+      font-weight: 500;
+      text-align: right;
+    }
+
+    .status-message {
+      background-color: #e3f2fd;
+      color: #1976d2;
+      border-radius: 4px;
+      padding: 12px;
+      margin: 10px 0;
+      font-size: 14px;
+    }
+
+    .error-message {
+      background-color: #ffebee;
+      color: #c62828;
+      border-radius: 4px;
+      padding: 12px;
+      margin: 10px 0;
+      font-size: 14px;
+    }
+
+    .loading {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      color: #666666;
+    }
+
+    .spinner {
+      border: 2px solid #f3f3f3;
+      border-top: 2px solid #0066cc;
+      border-radius: 50%;
+      width: 16px;
+      height: 16px;
+      animation: spin 1s linear infinite;
+      margin-right: 8px;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🎩 Figma Magician</h1>
+    
+    <!-- AI 设计分析 -->
+    <div class="section">
+      <h2>AI 设计分析</h2>
+      <button class="btn" onclick="analyzeDesign()">分析当前设计</button>
+      <div id="analysis-results" style="margin-top: 16px;"></div>
+    </div>
+
+    <!-- 设计系统组件 -->
+    <div class="section">
+      <h2>设计系统组件</h2>
+      <div>
+        <button class="btn btn-sm" onclick="generateComponents('UI Elements')">UI 元素</button>
+        <button class="btn btn-sm" onclick="generateComponents('Layout')">布局组件</button>
+        <button class="btn btn-sm" onclick="generateComponents('Form Elements')">表单元素</button>
+      </div>
+      <div id="components-results" style="margin-top: 16px;"></div>
+    </div>
+
+    <!-- 颜色方案 -->
+    <div class="section">
+      <h2>颜色方案</h2>
+      <div class="color-scheme-grid">
+        <div class="color-scheme-card" onclick="applyColorScheme('Default')">
+          <div class="color-scheme-name">默认</div>
+          <div class="color-palette">
+            <div class="color-swatch" style="background-color: #1a1a1a;"></div>
+            <div class="color-swatch" style="background-color: #333333;"></div>
+            <div class="color-swatch" style="background-color: #666666;"></div>
+            <div class="color-swatch" style="background-color: #999999;"></div>
+            <div class="color-swatch" style="background-color: #cccccc;"></div>
+            <div class="color-swatch" style="background-color: #f5f5f5;"></div>
+          </div>
+        </div>
+        <div class="color-scheme-card" onclick="applyColorScheme('Blue')">
+          <div class="color-scheme-name">蓝色</div>
+          <div class="color-palette">
+            <div class="color-swatch" style="background-color: #003366;"></div>
+            <div class="color-swatch" style="background-color: #0066cc;"></div>
+            <div class="color-swatch" style="background-color: #3399ff;"></div>
+            <div class="color-swatch" style="background-color: #66b3ff;"></div>
+            <div class="color-swatch" style="background-color: #99ccff;"></div>
+            <div class="color-swatch" style="background-color: #cce5ff;"></div>
+          </div>
+        </div>
+        <div class="color-scheme-card" onclick="applyColorScheme('Green')">
+          <div class="color-scheme-name">绿色</div>
+          <div class="color-palette">
+            <div class="color-swatch" style="background-color: #006633;"></div>
+            <div class="color-swatch" style="background-color: #00994d;"></div>
+            <div class="color-swatch" style="background-color: #33cc77;"></div>
+            <div class="color-swatch" style="background-color: #66dd99;"></div>
+            <div class="color-swatch" style="background-color: #99eecc;"></div>
+            <div class="color-swatch" style="background-color: #ccffe6;"></div>
+          </div>
+        </div>
+        <div class="color-scheme-card" onclick="applyColorScheme('Purple')">
+          <div class="color-scheme-name">紫色</div>
+          <div class="color-palette">
+            <div class="color-swatch" style="background-color: #330066;"></div>
+            <div class="color-swatch" style="background-color: #6600cc;"></div>
+            <div class="color-swatch" style="background-color: #9933ff;"></div>
+            <div class="color-swatch" style="background-color: #bb66ff;"></div>
+            <div class="color-swatch" style="background-color: #dd99ff;"></div>
+            <div class="color-swatch" style="background-color: #f2ccff;"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 设计工具 -->
+    <div class="section">
+      <h2>设计工具</h2>
+      <button class="btn" onclick="autoLayoutSelection()">自动布局选择</button>
+      <button class="btn" onclick="generateAltText()">生成图片替代文本</button>
+      <button class="btn" onclick="checkAccessibility()">检查可访问性</button>
+      <button class="btn" onclick="getDesignTokens()">获取设计令牌</button>
+      <div id="tools-results" style="margin-top: 16px;"></div>
+    </div>
+  </div>
+
+  <script>
+    // 发送消息到插件代码
+    function sendMessage(type, data = {}) {
+      parent.postMessage({ pluginMessage: { type, ...data } }, '*');
+    }
+
+    // 分析设计
+    function analyzeDesign() {
+      const resultsDiv = document.getElementById('analysis-results');
+      resultsDiv.innerHTML = '<div class="loading"><div class="spinner"></div>正在分析设计...</div>';
+      sendMessage('analyze-design');
+    }
+
+    // 生成组件
+    function generateComponents(category) {
+      const resultsDiv = document.getElementById('components-results');
+      resultsDiv.innerHTML = '<div class="loading"><div class="spinner"></div>正在生成组件...</div>';
+      sendMessage('generate-components', { category });
+    }
+
+    // 应用颜色方案
+    function applyColorScheme(schemeName) {
+      const resultsDiv = document.getElementById('tools-results');
+      resultsDiv.innerHTML = '<div class="loading"><div class="spinner"></div>正在应用颜色方案...</div>';
+      sendMessage('apply-color-scheme', { schemeName });
+    }
+
+    // 自动布局
+    function autoLayoutSelection() {
+      const resultsDiv = document.getElementById('tools-results');
+      resultsDiv.innerHTML = '<div class="loading"><div class="spinner"></div>正在应用自动布局...</div>';
+      sendMessage('auto-layout');
+    }
+
+    // 生成替代文本
+    function generateAltText() {
+      const resultsDiv = document.getElementById('tools-results');
+      resultsDiv.innerHTML = '<div class="loading"><div class="spinner"></div>正在生成替代文本...</div>';
+      sendMessage('generate-alt-text');
+    }
+
+    // 检查可访问性
+    function checkAccessibility() {
+      const resultsDiv = document.getElementById('tools-results');
+      resultsDiv.innerHTML = '<div class="loading"><div class="spinner"></div>正在检查可访问性...</div>';
+      sendMessage('check-accessibility');
+    }
+
+    // 获取设计令牌
+    function getDesignTokens() {
+      const resultsDiv = document.getElementById('tools-results');
+      resultsDiv.innerHTML = '<div class="loading"><div class="spinner"></div>正在提取设计令牌...</div>';
+      sendMessage('get-design-tokens');
+    }
+
+    // 处理来自插件代码的消息
+    onmessage = (event) => {
+      const { type, ...data } = event.data.pluginMessage;
+      
+      switch (type) {
+        case 'design-analysis':
+          handleDesignAnalysis(data);
+          break;
+        case 'suggestion-applied':
+        case 'components-generated':
+        case 'color-scheme-applied':
+        case 'auto-layout-applied':
+        case 'alt-text-generated':
+          handleStatusMessage(data.message);
+          break;
+        case 'accessibility-check':
+          handleAccessibilityCheck(data);
+          break;
+        case 'design-tokens':
+          handleDesignTokens(data.tokens);
+          break;
+        case 'error':
+          handleErrorMessage(data.message);
+          break;
+      }
+    };
+
+    // 处理设计分析结果
+    function handleDesignAnalysis(data) {
+      const resultsDiv = document.getElementById('analysis-results');
+      let html = `
+        <div style="margin-bottom: 16px;">
+          <strong>分析摘要:</strong><br>
+          组件数量: ${data.componentCount}<br>
+          文本节点: ${data.textNodeCount}<br>
+          颜色数量: ${data.colorCount}
+        </div>
+        <h3 style="font-size: 14px; margin-bottom: 8px;">AI 建议:</h3>
+      `;
+      
+      data.suggestions.forEach(suggestion => {
+        html += `
+          <div class="suggestion-item">
+            <div class="suggestion-title">${suggestion.title}</div>
+            <div class="suggestion-description">${suggestion.description}</div>
+            <div class="suggestion-priority priority-${suggestion.priority}">${suggestion.priority === 'high' ? '高' : suggestion.priority === 'medium' ? '中' : '低'}优先级</div>
+            <button class="btn btn-sm" style="margin-top: 8px;" onclick="applySuggestion('${suggestion.id}')">应用建议</button>
+          </div>
+        `;
+      });
+      
+      resultsDiv.innerHTML = html;
+    }
+
+    // 应用建议
+    function applySuggestion(suggestionId) {
+      sendMessage('apply-suggestion', { suggestionId });
+    }
+
+    // 处理组件生成结果
+    function handleComponentsGenerated(data) {
+      const resultsDiv = document.getElementById('components-results');
+      let html = `<div class="status-message">${data.message}</div>`;
+      
+      if (data.components.length > 0) {
+        html += '<div class="component-grid">';
+        data.components.forEach(component => {
+          html += `
+            <div class="component-card">
+              <div class="component-name">${component.name}</div>
+              <div class="component-category">${component.category}</div>
+            </div>
+          `;
+        });
+        html += '</div>';
+      }
+      
+      resultsDiv.innerHTML = html;
+    }
+
+    // 处理状态消息
+    function handleStatusMessage(message) {
+      const toolsDiv = document.getElementById('tools-results');
+      toolsDiv.innerHTML = `<div class="status-message">${message}</div>`;
+    }
+
+    // 处理错误消息
+    function handleErrorMessage(message) {
+      const toolsDiv = document.getElementById('tools-results');
+      toolsDiv.innerHTML = `<div class="error-message">${message}</div>`;
+    }
+
+    // 处理可访问性检查结果
+    function handleAccessibilityCheck(data) {
+      const resultsDiv = document.getElementById('tools-results');
+      let html = `
+        <div class="compliance-bar">
+          <div class="compliance-fill" style="width: ${data.compliance}%;"></div>
+        </div>
+        <div class="compliance-text">可访问性合规度: ${data.compliance}%</div>
+        <h3 style="font-size: 14px; margin: 16px 0 8px;">发现的问题:</h3>
+      `;
+      
+      data.issues.forEach(issue => {
+        html += `
+          <div class="accessibility-issue">
+            <div class="issue-severity severity-${issue.severity}">${issue.severity === 'high' ? '高' : issue.severity === 'medium' ? '中' : '低'}严重度</div>
+            <div class="issue-description">${issue.description}</div>
+          </div>
+        `;
+      });
+      
+      resultsDiv.innerHTML = html;
+    }
+
+    // 处理设计令牌
+    function handleDesignTokens(tokens) {
+      const resultsDiv = document.getElementById('tools-results');
+      let html = '<h3 style="font-size: 14px; margin-bottom: 8px;">设计令牌:</h3>';
+      
+      // 颜色令牌
+      html += '<div style="margin-bottom: 16px;"><strong>颜色:</strong></div>';
+      html += '<div class="token-grid">';
+      Object.entries(tokens.colors).forEach(([name, value]) => {
+        html += `
+          <div class="token-item">
+            <div class="token-name">${name}</div>
+            <div class="token-value">${value}</div>
+            <div style="width: 100%; height: 16px; background-color: ${value}; border-radius: 2px; margin-top: 4px;"></div>
+          </div>
+        `;
+      });
+      html += '</div>';
+      
+      // 排版令牌
+      html += '<div style="margin: 16px 0 8px;"><strong>排版:</strong></div>';
+      html += '<div class="token-grid">';
+      Object.entries(tokens.typography).forEach(([name, styles]) => {
+        html += `
+          <div class="token-item">
+            <div class="token-name">${name}</div>
+            <div class="token-value">${styles.fontSize}px / ${styles.fontWeight}</div>
+          </div>
+        `;
+      });
+      html += '</div>';
+      
+      resultsDiv.innerHTML = html;
+    }
+  </script>
+</body>
+</html>

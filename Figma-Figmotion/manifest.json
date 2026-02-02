@@ -1,0 +1,16 @@
+{
+  "name": "Figma Figmotion",
+  "id": "figma-figmotion",
+  "api": "1.0.0",
+  "main": "code.js",
+  "ui": "ui.html",
+  "menu": [
+    {
+      "name": "Figmotion",
+      "command": "show-ui"
+    }
+  ],
+  "permissions": [
+    "document"
+  ]
+}

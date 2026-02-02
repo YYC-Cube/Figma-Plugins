@@ -1,0 +1,899 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Figma Plugins Manager</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background-color: #f5f5f5;
+      color: #1a1a1a;
+      line-height: 1.6;
+    }
+
+    .container {
+      padding: 20px;
+    }
+
+    h1 {
+      font-size: 20px;
+      font-weight: 600;
+      margin-bottom: 20px;
+      color: #1a1a1a;
+    }
+
+    h2 {
+      font-size: 16px;
+      font-weight: 600;
+      margin: 20px 0 10px;
+      color: #333333;
+    }
+
+    .section {
+      background-color: white;
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 16px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+
+    .btn {
+      background-color: #0066cc;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      padding: 8px 16px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background-color 0.2s;
+      margin-right: 8px;
+      margin-bottom: 8px;
+    }
+
+    .btn:hover {
+      background-color: #0052a3;
+    }
+
+    .btn-secondary {
+      background-color: #666666;
+    }
+
+    .btn-secondary:hover {
+      background-color: #525252;
+    }
+
+    .btn-sm {
+      padding: 6px 12px;
+      font-size: 12px;
+    }
+
+    .search-box {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+
+    .search-input {
+      flex: 1;
+      padding: 10px 12px;
+      border: 1px solid #e0e0e0;
+      border-radius: 6px;
+      font-size: 14px;
+    }
+
+    .search-input:focus {
+      outline: none;
+      border-color: #0066cc;
+    }
+
+    .category-tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+    }
+
+    .category-tab {
+      padding: 8px 16px;
+      background-color: #f9f9f9;
+      border: 1px solid #e0e0e0;
+      border-radius: 20px;
+      font-size: 13px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .category-tab:hover {
+      background-color: #f0f0f0;
+    }
+
+    .category-tab.active {
+      background-color: #0066cc;
+      color: white;
+      border-color: #0066cc;
+    }
+
+    .plugin-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 16px;
+      margin-top: 16px;
+    }
+
+    .plugin-card {
+      background-color: #f9f9f9;
+      border: 1px solid #e0e0e0;
+      border-radius: 8px;
+      padding: 16px;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .plugin-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      border-color: #0066cc;
+    }
+
+    .plugin-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 12px;
+    }
+
+    .plugin-name {
+      font-weight: 600;
+      font-size: 16px;
+      margin-bottom: 4px;
+    }
+
+    .plugin-version {
+      font-size: 12px;
+      color: #666666;
+    }
+
+    .plugin-badge {
+      background-color: #0066cc;
+      color: white;
+      padding: 2px 8px;
+      border-radius: 10px;
+      font-size: 11px;
+      font-weight: 500;
+    }
+
+    .plugin-description {
+      font-size: 13px;
+      color: #666666;
+      margin-bottom: 12px;
+      line-height: 1.5;
+    }
+
+    .plugin-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+      font-size: 12px;
+      color: #999;
+    }
+
+    .plugin-rating {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .plugin-rating::before {
+      content: '⭐';
+    }
+
+    .plugin-downloads {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .plugin-downloads::before {
+      content: '📥';
+    }
+
+    .plugin-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .btn-install {
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      padding: 8px 16px;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background-color 0.2s;
+      flex: 1;
+    }
+
+    .btn-install:hover {
+      background-color: #45a049;
+    }
+
+    .btn-uninstall {
+      background-color: #dc3545;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      padding: 8px 16px;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background-color 0.2s;
+      flex: 1;
+    }
+
+    .btn-uninstall:hover {
+      background-color: #c82333;
+    }
+
+    .status-message {
+      background-color: #e3f2fd;
+      color: #1976d2;
+      border-radius: 4px;
+      padding: 12px;
+      margin: 10px 0;
+      font-size: 14px;
+    }
+
+    .error-message {
+      background-color: #ffebee;
+      color: #c62828;
+      border-radius: 4px;
+      padding: 12px;
+      margin: 10px 0;
+      font-size: 14px;
+    }
+
+    .loading {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      color: #666666;
+    }
+
+    .spinner {
+      border: 2px solid #f3f3f3;
+      border-top: 2px solid #0066cc;
+      border-radius: 50%;
+      width: 16px;
+      height: 16px;
+      animation: spin 1s linear infinite;
+      margin-right: 8px;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+      gap: 12px;
+      margin-top: 12px;
+    }
+
+    .stat-item {
+      background-color: #f9f9f9;
+      border-radius: 6px;
+      padding: 12px;
+      text-align: center;
+    }
+
+    .stat-value {
+      font-size: 24px;
+      font-weight: 600;
+      color: #0066cc;
+      margin-bottom: 4px;
+    }
+
+    .stat-label {
+      font-size: 12px;
+      color: #666666;
+    }
+
+    .recommendation-list {
+      margin-top: 12px;
+    }
+
+    .recommendation-item {
+      background-color: #f0f0f0;
+      border-radius: 6px;
+      padding: 12px;
+      margin-bottom: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .recommendation-info {
+      flex: 1;
+    }
+
+    .recommendation-name {
+      font-weight: 600;
+      font-size: 14px;
+      margin-bottom: 4px;
+    }
+
+    .recommendation-description {
+      font-size: 12px;
+      color: #666666;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 40px 20px;
+      color: #666666;
+    }
+
+    .empty-state-icon {
+      font-size: 48px;
+      margin-bottom: 16px;
+    }
+
+    .empty-state-text {
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🧩 Figma Plugins Manager</h1>
+    
+    <!-- 搜索和过滤 -->
+    <div class="section">
+      <h2>搜索插件</h2>
+      <div class="search-box">
+        <input type="text" class="search-input" id="search-input" placeholder="搜索插件名称或描述..." onkeyup="handleSearch(event)">
+        <button class="btn" onclick="searchPlugins()">搜索</button>
+      </div>
+      
+      <div class="category-tabs" id="category-tabs"></div>
+    </div>
+
+    <!-- 插件列表 -->
+    <div class="section">
+      <h2>插件列表</h2>
+      <div id="plugin-list"></div>
+    </div>
+
+    <!-- 推荐 -->
+    <div class="section">
+      <h2>推荐插件</h2>
+      <button class="btn" onclick="getRecommendations()">获取推荐</button>
+      <div id="recommendations" style="margin-top: 16px;"></div>
+    </div>
+
+    <!-- 统计信息 -->
+    <div class="section">
+      <h2>统计信息</h2>
+      <button class="btn" onclick="getStatistics()">查看统计</button>
+      <div id="statistics" style="margin-top: 16px;"></div>
+    </div>
+
+    <!-- 操作结果 -->
+    <div class="section">
+      <h2>操作结果</h2>
+      <div id="operation-results"></div>
+    </div>
+  </div>
+
+  <script>
+    // 插件分类数据
+    const pluginCategories = [
+      {
+        id: '1',
+        name: '设计工具',
+        description: '设计和创作相关的工具',
+        type: 'DESIGN'
+      },
+      {
+        id: '2',
+        name: '开发工具',
+        description: '开发和代码生成相关的工具',
+        type: 'DEVELOPMENT'
+      },
+      {
+        id: '3',
+        name: '效率工具',
+        description: '提高工作效率的工具',
+        type: 'PRODUCTIVITY'
+      },
+      {
+        id: '4',
+        name: '协作工具',
+        description: '团队协作和沟通相关的工具',
+        type: 'COLLABORATION'
+      },
+      {
+        id: '5',
+        name: '数据分析',
+        description: '数据分析和可视化工具',
+        type: 'ANALYTICS'
+      },
+      {
+        id: '6',
+        name: '自动化',
+        description: '自动化和批量处理工具',
+        type: 'AUTOMATION'
+      }
+    ];
+
+    // 插件列表数据
+    const pluginList = [
+      {
+        id: '1',
+        name: 'Figma Content Reel',
+        description: '内容填充和占位符生成工具',
+        category: 'DESIGN',
+        version: '1.0.0',
+        author: 'YYC³ Team',
+        rating: 4.8,
+        downloads: 15000,
+        installed: true,
+        featured: true
+      },
+      {
+        id: '2',
+        name: 'Figma Design Lint',
+        description: '设计规范检查和质量保证工具',
+        category: 'DESIGN',
+        version: '1.0.0',
+        author: 'YYC³ Team',
+        rating: 4.7,
+        downloads: 12000,
+        installed: true,
+        featured: true
+      },
+      {
+        id: '3',
+        name: 'Figma EX',
+        description: '扩展工具集，提供额外功能',
+        category: 'PRODUCTIVITY',
+        version: '1.0.0',
+        author: 'YYC³ Team',
+        rating: 4.6,
+        downloads: 10000,
+        installed: false,
+        featured: false
+      },
+      {
+        id: '4',
+        name: 'Figma Figmotion',
+        description: '动画创建和编辑工具',
+        category: 'DESIGN',
+        version: '1.0.0',
+        author: 'YYC³ Team',
+        rating: 4.9,
+        downloads: 18000,
+        installed: false,
+        featured: true
+      },
+      {
+        id: '5',
+        name: 'Figma Gleef',
+        description: '创意效果和滤镜工具',
+        category: 'DESIGN',
+        version: '1.0.0',
+        author: 'YYC³ Team',
+        rating: 4.5,
+        downloads: 8000,
+        installed: false,
+        featured: false
+      },
+      {
+        id: '6',
+        name: 'Figma Grid Guide',
+        description: '网格和辅助线创建工具',
+        category: 'DESIGN',
+        version: '1.0.0',
+        author: 'YYC³ Team',
+        rating: 4.4,
+        downloads: 7000,
+        installed: false,
+        featured: false
+      },
+      {
+        id: '7',
+        name: 'Figma html.to.design',
+        description: 'HTML到设计的转换工具',
+        category: 'DEVELOPMENT',
+        version: '1.0.0',
+        author: 'YYC³ Team',
+        rating: 4.6,
+        downloads: 11000,
+        installed: false,
+        featured: false
+      },
+      {
+        id: '8',
+        name: 'Figma Magician',
+        description: 'AI辅助设计工具',
+        category: 'DESIGN',
+        version: '1.0.0',
+        author: 'YYC³ Team',
+        rating: 4.8,
+        downloads: 20000,
+        installed: false,
+        featured: true
+      },
+      {
+        id: '9',
+        name: 'Figma Able',
+        description: '可访问性检查和改进工具',
+        category: 'DESIGN',
+        version: '1.0.0',
+        author: 'YYC³ Team',
+        rating: 4.7,
+        downloads: 9000,
+        installed: false,
+        featured: false
+      },
+      {
+        id: '10',
+        name: 'Figma Auto Layout Pro',
+        description: '高级自动布局工具',
+        category: 'PRODUCTIVITY',
+        version: '1.0.0',
+        author: 'YYC³ Team',
+        rating: 4.5,
+        downloads: 8500,
+        installed: false,
+        featured: false
+      },
+      {
+        id: '11',
+        name: 'Figma Autoflow',
+        description: '流程图和连接器创建工具',
+        category: 'DESIGN',
+        version: '1.0.0',
+        author: 'YYC³ Team',
+        rating: 4.6,
+        downloads: 9500,
+        installed: false,
+        featured: false
+      },
+      {
+        id: '12',
+        name: 'Figma CN',
+        description: '中文语言支持和本地化工具',
+        category: 'PRODUCTIVITY',
+        version: '1.0.0',
+        author: 'YYC³ Team',
+        rating: 4.4,
+        downloads: 6000,
+        installed: false,
+        featured: false
+      },
+      {
+        id: '13',
+        name: 'Figma Parrot',
+        description: '元素复制和重复工具',
+        category: 'PRODUCTIVITY',
+        version: '1.0.0',
+        author: 'YYC³ Team',
+        rating: 4.5,
+        downloads: 7500,
+        installed: false,
+        featured: false
+      },
+      {
+        id: '14',
+        name: 'Figma Image Palette',
+        description: '从图片提取颜色和创建调色板',
+        category: 'DESIGN',
+        version: '1.0.0',
+        author: 'YYC³ Team',
+        rating: 4.7,
+        downloads: 13000,
+        installed: false,
+        featured: false
+      },
+      {
+        id: '15',
+        name: 'Figma PureRef',
+        description: '纯净引用和重构工具',
+        category: 'PRODUCTIVITY',
+        version: '1.0.0',
+        author: 'YYC³ Team',
+        rating: 4.6,
+        downloads: 8000,
+        installed: false,
+        featured: false
+      },
+      {
+        id: '16',
+        name: 'Figma Redlines',
+        description: '红线标注和设计审查工具',
+        category: 'COLLABORATION',
+        version: '1.0.0',
+        author: 'YYC³ Team',
+        rating: 4.8,
+        downloads: 14000,
+        installed: false,
+        featured: true
+      },
+      {
+        id: '17',
+        name: 'Figma to HTML',
+        description: '将Figma设计转换为HTML代码',
+        category: 'DEVELOPMENT',
+        version: '1.0.0',
+        author: 'YYC³ Team',
+        rating: 4.9,
+        downloads: 22000,
+        installed: false,
+        featured: true
+      }
+    ];
+
+    let currentCategory = 'ALL';
+    let currentPlugins = [...pluginList];
+
+    // 初始化页面
+    document.addEventListener('DOMContentLoaded', function() {
+      renderCategoryTabs();
+      renderPluginList();
+    });
+
+    // 渲染分类标签
+    function renderCategoryTabs() {
+      const tabsContainer = document.getElementById('category-tabs');
+      tabsContainer.innerHTML = `
+        <div class="category-tab active" onclick="filterByCategory('ALL')">全部</div>
+        ${pluginCategories.map(category => `
+          <div class="category-tab" onclick="filterByCategory('${category.type}')">${category.name}</div>
+        `).join('')}
+      `;
+    }
+
+    // 渲染插件列表
+    function renderPluginList() {
+      const listContainer = document.getElementById('plugin-list');
+      
+      if (currentPlugins.length === 0) {
+        listContainer.innerHTML = `
+          <div class="empty-state">
+            <div class="empty-state-icon">🔍</div>
+            <div class="empty-state-text">没有找到匹配的插件</div>
+          </div>
+        `;
+        return;
+      }
+
+      listContainer.innerHTML = `<div class="plugin-grid">${currentPlugins.map(plugin => `
+        <div class="plugin-card">
+          <div class="plugin-header">
+            <div>
+              <div class="plugin-name">${plugin.name}</div>
+              <div class="plugin-version">v${plugin.version}</div>
+            </div>
+            ${plugin.featured ? '<div class="plugin-badge">推荐</div>' : ''}
+          </div>
+          <div class="plugin-description">${plugin.description}</div>
+          <div class="plugin-meta">
+            <div class="plugin-rating">${plugin.rating}</div>
+            <div class="plugin-downloads">${formatDownloads(plugin.downloads)}</div>
+          </div>
+          <div class="plugin-actions">
+            ${plugin.installed 
+              ? `<button class="btn-uninstall" onclick="uninstallPlugin('${plugin.id}')">卸载</button>`
+              : `<button class="btn-install" onclick="installPlugin('${plugin.id}')">安装</button>`
+            }
+          </div>
+        </div>
+      `).join('')}</div>`;
+    }
+
+    // 格式化下载量
+    function formatDownloads(downloads) {
+      if (downloads >= 1000) {
+        return (downloads / 1000).toFixed(1) + 'k';
+      }
+      return downloads;
+    }
+
+    // 发送消息到插件代码
+    function sendMessage(type, data = {}) {
+      parent.postMessage({ pluginMessage: { type, ...data } }, '*');
+    }
+
+    // 处理搜索
+    function handleSearch(event) {
+      if (event.key === 'Enter') {
+        searchPlugins();
+      }
+    }
+
+    // 搜索插件
+    function searchPlugins() {
+      const query = document.getElementById('search-input').value;
+      const resultsDiv = document.getElementById('operation-results');
+      resultsDiv.innerHTML = '<div class="loading"><div class="spinner"></div>正在搜索...</div>';
+      sendMessage('search-plugins', { query });
+    }
+
+    // 按分类过滤
+    function filterByCategory(category) {
+      currentCategory = category;
+      
+      // 更新标签状态
+      document.querySelectorAll('.category-tab').forEach(tab => {
+        tab.classList.remove('active');
+        if (tab.textContent === (category === 'ALL' ? '全部' : pluginCategories.find(c => c.type === category).name)) {
+          tab.classList.add('active');
+        }
+      });
+
+      // 过滤插件
+      if (category === 'ALL') {
+        currentPlugins = [...pluginList];
+      } else {
+        currentPlugins = pluginList.filter(plugin => plugin.category === category);
+      }
+
+      renderPluginList();
+    }
+
+    // 安装插件
+    function installPlugin(pluginId) {
+      const resultsDiv = document.getElementById('operation-results');
+      resultsDiv.innerHTML = '<div class="loading"><div class="spinner"></div>正在安装...</div>';
+      sendMessage('install-plugin', { pluginId });
+    }
+
+    // 卸载插件
+    function uninstallPlugin(pluginId) {
+      const resultsDiv = document.getElementById('operation-results');
+      resultsDiv.innerHTML = '<div class="loading"><div class="spinner"></div>正在卸载...</div>';
+      sendMessage('uninstall-plugin', { pluginId });
+    }
+
+    // 获取推荐
+    function getRecommendations() {
+      const resultsDiv = document.getElementById('recommendations');
+      resultsDiv.innerHTML = '<div class="loading"><div class="spinner"></div>正在获取推荐...</div>';
+      sendMessage('get-recommendations');
+    }
+
+    // 获取统计
+    function getStatistics() {
+      const resultsDiv = document.getElementById('statistics');
+      resultsDiv.innerHTML = '<div class="loading"><div class="spinner"></div>正在获取统计...</div>';
+      sendMessage('get-statistics');
+    }
+
+    // 处理来自插件代码的消息
+    onmessage = (event) => {
+      const { type, ...data } = event.data.pluginMessage;
+      
+      switch (type) {
+        case 'plugins-searched':
+        case 'plugins-filtered':
+          handlePluginsFiltered(data);
+          break;
+        case 'plugin-installed':
+        case 'plugin-uninstalled':
+          handleStatusMessage(data.message);
+          updatePluginStatus(data.plugin);
+          break;
+        case 'recommendations-retrieved':
+          handleRecommendations(data);
+          break;
+        case 'statistics-retrieved':
+          handleStatistics(data);
+          break;
+        case 'error':
+          handleErrorMessage(data.message);
+          break;
+      }
+    };
+
+    // 处理插件过滤结果
+    function handlePluginsFiltered(data) {
+      const resultsDiv = document.getElementById('operation-results');
+      resultsDiv.innerHTML = `<div class="status-message">${data.message}</div>`;
+      currentPlugins = data.plugins;
+      renderPluginList();
+    }
+
+    // 更新插件状态
+    function updatePluginStatus(plugin) {
+      const index = currentPlugins.findIndex(p => p.id === plugin.id);
+      if (index !== -1) {
+        currentPlugins[index] = plugin;
+        renderPluginList();
+      }
+    }
+
+    // 处理推荐
+    function handleRecommendations(data) {
+      const resultsDiv = document.getElementById('recommendations');
+      const recommendations = data.recommendations;
+      
+      let html = `<div class="status-message">${data.message}</div>`;
+      html += '<div class="recommendation-list">';
+      recommendations.forEach(rec => {
+        html += `
+          <div class="recommendation-item">
+            <div class="recommendation-info">
+              <div class="recommendation-name">${rec.name}</div>
+              <div class="recommendation-description">${rec.description}</div>
+            </div>
+            <button class="btn btn-sm" onclick="installPlugin('${rec.id}')">安装</button>
+          </div>
+        `;
+      });
+      html += '</div>';
+      
+      resultsDiv.innerHTML = html;
+    }
+
+    // 处理统计信息
+    function handleStatistics(data) {
+      const resultsDiv = document.getElementById('statistics');
+      const stats = data.statistics;
+      
+      let html = `<div class="status-message">${data.message}</div>`;
+      html += '<div class="stats-grid">';
+      html += `
+        <div class="stat-item">
+          <div class="stat-value">${stats.totalPlugins}</div>
+          <div class="stat-label">总插件</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value">${stats.installedPlugins}</div>
+          <div class="stat-label">已安装</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value">${stats.featuredPlugins}</div>
+          <div class="stat-label">推荐</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value">${formatDownloads(stats.totalDownloads)}</div>
+          <div class="stat-label">总下载</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value">${stats.averageRating}</div>
+          <div class="stat-label">平均评分</div>
+        </div>
+      `;
+      html += '</div>';
+      
+      resultsDiv.innerHTML = html;
+    }
+
+    // 处理状态消息
+    function handleStatusMessage(message) {
+      const resultsDiv = document.getElementById('operation-results');
+      resultsDiv.innerHTML = `<div class="status-message">${message}</div>`;
+    }
+
+    // 处理错误消息
+    function handleErrorMessage(message) {
+      const resultsDiv = document.getElementById('operation-results');
+      resultsDiv.innerHTML = `<div class="error-message">${message}</div>`;
+    }
+  </script>
+</body>
+</html>

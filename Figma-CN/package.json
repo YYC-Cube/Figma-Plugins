@@ -1,0 +1,23 @@
+{
+  "name": "figma-cn",
+  "version": "1.0.0",
+  "description": "Chinese language support and tools for Figma",
+  "main": "code.js",
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc -w"
+  },
+  "keywords": [
+    "figma",
+    "figma-plugin",
+    "chinese",
+    "localization",
+    "cn"
+  ],
+  "author": "YYC³ Team",
+  "license": "MIT",
+  "devDependencies": {
+    "@figma/plugin-typings": "^1.80.0",
+    "typescript": "^5.0.0"
+  }
+}

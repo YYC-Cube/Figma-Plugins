@@ -1,0 +1,8 @@
+{
+  "name": "Figma Parrot",
+  "id": "figma-parrot",
+  "api": "1.0.0",
+  "main": "code.js",
+  "ui": "ui.html",
+  "permissions": ["document"]
+}

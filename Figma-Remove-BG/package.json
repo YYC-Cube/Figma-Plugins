@@ -1,0 +1,22 @@
+{
+  "name": "figma-remove-bg",
+  "version": "1.0.0",
+  "description": "Remove background from images in Figma",
+  "main": "code.js",
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc -w"
+  },
+  "keywords": [
+    "figma",
+    "figma-plugin",
+    "background-removal",
+    "image-processing"
+  ],
+  "author": "YYC³ Team",
+  "license": "MIT",
+  "devDependencies": {
+    "@figma/plugin-typings": "^1.80.0",
+    "typescript": "^5.0.0"
+  }
+}

@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Figma Image Palette</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background-color: #f5f5f5;
+      color: #1a1a1a;
+      line-height: 1.6;
+    }
+
+    .container {
+      padding: 20px;
+    }
+
+    h1 {
+      font-size: 20px;
+      font-weight: 600;
+      margin-bottom: 20px;
+      color: #1a1a1a;
+    }
+
+    h2 {
+      font-size: 16px;
+      font-weight: 600;
+      margin: 20px 0 10px;
+      color: #333333;
+    }
+
+    .section {
+      background-color: white;
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 16px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+
+    .btn {
+      background-color: #0066cc;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      padding: 8px 16px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background-color 0.2s;
+      margin-right: 8px;
+      margin-bottom: 8px;
+    }
+
+    .btn:hover {
+      background-color: #0052a3;
+    }
+
+    .btn-secondary {
+      background-color: #666666;
+    }
+
+    .btn-secondary:hover {
+      background-color: #525252;
+    }
+
+    .btn-sm {
+      padding: 6px 12px;
+      font-size: 12px;
+    }
+
+    .algorithm-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 12px;
+      margin-top: 12px;
+    }
+
+    .algorithm-card {
+      background-color: #f9f9f9;
+      border: 1px solid #e0e0e0;
+      border-radius: 6px;
+      padding: 12px;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .algorithm-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      border-color: #0066cc;
+    }
+
+    .algorithm-name {
+      font-weight: 600;
+      font-size: 14px;
+      margin-bottom: 4px;
+    }
+
+    .algorithm-description {
+      font-size: 12px;
+      color: #666666;
+    }
+
+    .control-group {
+      margin: 12px 0;
+    }
+
+    .control-row {
+      display: flex;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .control-label {
+      width: 120px;
+      font-size: 13px;
+      color: #333333;
+    }
+
+    .control-input {
+      flex: 1;
+      padding: 6px 8px;
+      border: 1px solid #e0e0e0;
+      border-radius: 4px;
+      font-size: 13px;
+    }
+
+    .control-select {
+      flex: 1;
+      padding: 6px 8px;
+      border: 1px solid #e0e0e0;
+      border-radius: 4px;
+      font-size: 13px;
+    }
+
+    .palette-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+      gap: 12px;
+      margin-top: 12px;
+    }
+
+    .palette-card {
+      background-color: #f9f9f9;
+      border: 1px solid #e0e0e0;
+      border-radius: 6px;
+      padding: 12px;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .palette-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      border-color: #0066cc;
+    }
+
+    .palette-name {
+      font-weight: 600;
+      font-size: 14px;
+      margin-bottom: 4px;
+    }
+
+    .palette-description {
+      font-size: 12px;
+      color: #666666;
+      margin-bottom: 8px;
+    }
+
+    .palette-colors {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+    }
+
+    .color-swatch {
+      width: 24px;
+      height: 24px;
+      border-radius: 4px;
+      border: 1px solid #e0e0e0;
+    }
+
+    .color-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 12px 0;
+    }
+
+    .color-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 60px;
+    }
+
+    .color-swatch-large {
+      width: 40px;
+      height: 40px;
+      border-radius: 6px;
+      border: 1px solid #e0e0e0;
+      margin-bottom: 4px;
+    }
+
+    .color-hex {
+      font-size: 10px;
+      color: #666666;
+      text-align: center;
+    }
+
+    .button-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 12px 0;
+    }
+
+    .status-message {
+      background-color: #e3f2fd;
+      color: #1976d2;
+      border-radius: 4px;
+      padding: 12px;
+      margin: 10px 0;
+      font-size: 14px;
+    }
+
+    .error-message {
+      background-color: #ffebee;
+      color: #c62828;
+      border-radius: 4px;
+      padding: 12px;
+      margin: 10px 0;
+      font-size: 14px;
+    }
+
+    .loading {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      color: #666666;
+    }
+
+    .spinner {
+      border: 2px solid #f3f3f3;
+      border-top: 2px solid #0066cc;
+      border-radius: 50%;
+      width: 16px;
+      height: 16px;
+      animation: spin 1s linear infinite;
+      margin-right: 8px;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .harmony-score {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 8px;
+    }
+
+    .score-item {
+      text-align: center;
+    }
+
+    .score-value {
+      font-size: 24px;
+      font-weight: 600;
+      color: #0066cc;
+    }
+
+    .score-label {
+      font-size: 12px;
+      color: #666666;
+    }
+
+    .suggestions {
+      margin-top: 12px;
+    }
+
+    .suggestion-item {
+      background-color: #f9f9f9;
+      padding: 8px 12px;
+      border-radius: 4px;
+      margin-bottom: 8px;
+      font-size: 13px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🎨 Figma Image Palette</h1>
+    
+    <!-- 颜色提取 -->
+    <div class="section">
+      <h2>颜色提取</h2>
+      <p style="font-size: 13px; color: #666666; margin-bottom: 12px;">从选中的图片中提取颜色</p>
+      
+      <div class="control-group">
+        <div class="control-row">
+          <label class="control-label">提取算法:</label>
+          <select class="control-select" id="extraction-algorithm">
+            <option value="1">主色调</option>
+            <option value="2">量化提取</option>
+            <option value="3">K-Means聚类</option>
+            <option value="4">频率分析</option>
+          </select>
+        </div>
+        <div class="control-row">
+          <label class="control-label">颜色数量:</label>
+          <input type="number" class="control-input" id="color-count" value="8" min="1" max="32">
+        </div>
+      </div>
+      
+      <button class="btn" onclick="extractColors()">提取颜色</button>
+      <div id="extraction-results" style="margin-top: 16px;"></div>
+    </div>
+
+    <!-- 调色板预设 -->
+    <div class="section">
+      <h2>调色板预设</h2>
+      <p style="font-size: 13px; color: #666666; margin-bottom: 12px;">选择预设调色板快速创建</p>
+      <div class="palette-grid" id="palette-presets"></div>
+    </div>
+
+    <!-- 颜色和谐度分析 -->
+    <div class="section">
+      <h2>颜色和谐度分析</h2>
+      <button class="btn" onclick="analyzeColorHarmony()">分析颜色和谐度</button>
+      <div id="harmony-results" style="margin-top: 16px;"></div>
+    </div>
+
+    <!-- 相似颜色生成 -->
+    <div class="section">
+      <h2>相似颜色生成</h2>
+      <div class="control-group">
+        <div class="control-row">
+          <label class="control-label">基础颜色:</label>
+          <input type="color" class="control-input" id="base-color" value="#0066cc" style="height: 40px;">
+        </div>
+        <div class="control-row">
+          <label class="control-label">生成数量:</label>
+          <input type="number" class="control-input" id="similar-count" value="6" min="1" max="16">
+        </div>
+      </div>
+      <button class="btn" onclick="generateSimilarColors()">生成相似颜色</button>
+      <div id="similar-results" style="margin-top: 16px;"></div>
+    </div>
+
+    <!-- 调色板管理 -->
+    <div class="section">
+      <h2>调色板管理</h2>
+      <div class="control-group">
+        <div class="control-row">
+          <label class="control-label">调色板名称:</label>
+          <input type="text" class="control-input" id="palette-name" placeholder="输入调色板名称">
+        </div>
+      </div>
+      <div class="button-group">
+        <button class="btn" onclick="saveCurrentPalette()">保存当前调色板</button>
+        <button class="btn btn-secondary" onclick="exportPalette('css')">导出为CSS</button>
+        <button class="btn btn-secondary" onclick="exportPalette('json')">导出为JSON</button>
+        <button class="btn btn-secondary" onclick="exportPalette('ase')">导出为ASE</button>
+      </div>
+    </div>
+
+    <!-- 操作结果 -->
+    <div class="section">
+      <h2>操作结果</h2>
+      <div id="operation-results"></div>
+    </div>
+  </div>
+
+  <script>
+    // 颜色提取算法数据
+    const extractionAlgorithms = [
+      {
+        id: '1',
+        name: '主色调',
+        description: '提取图片中最主要的颜色',
+        type: 'DOMINANT'
+      },
+      {
+        id: '2',
+        name: '量化提取',
+        description: '使用颜色量化算法提取代表性颜色',
+        type: 'QUANTIZATION'
+      },
+      {
+        id: '3',
+        name: 'K-Means聚类',
+        description: '使用K-Means聚类算法提取颜色',
+        type: 'KMEANS'
+      },
+      {
+        id: '4',
+        name: '频率分析',
+        description: '基于颜色频率提取常用颜色',
+        type: 'FREQUENCY'
+      }
+    ];
+
+    // 调色板预设数据
+    const palettePresets = [
+      {
+        id: '1',
+        name: 'Material Design',
+        description: 'Material Design标准调色板',
+        colors: ['#F44336', '#E91E63', '#9C27B0', '#673AB7', '#3F51B5', '#2196F3', '#03A9F4', '#00BCD4', '#009688', '#4CAF50', '#8BC34A', '#CDDC39', '#FFEB3B', '#FFC107', '#FF9800', '#FF5722']
+      },
+      {
+        id: '2',
+        name: 'iOS系统色',
+        description: 'iOS系统标准颜色',
+        colors: ['#007AFF', '#5856D6', '#FF2D55', '#FF9500', '#FFCC00', '#4CD964', '#5AC8FA', '#007AFF', '#5856D6', '#FF2D55']
+      },
+      {
+        id: '3',
+        name: 'Tailwind CSS',
+        description: 'Tailwind CSS默认调色板',
+        colors: ['#EF4444', '#F97316', '#F59E0B', '#84CC16', '#10B981', '#06B6D4', '#3B82F6', '#6366F1', '#8B5CF6', '#D946EF', '#F43F5E']
+      },
+      {
+        id: '4',
+        name: '自然色系',
+        description: '自然界的颜色',
+        colors: ['#8B4513', '#A0522D', '#CD853F', '#DEB887', '#F4A460', '#D2691E', '#FF7F50', '#FF6347', '#FF4500', '#DC143C']
+      }
+    ];
+
+    // 初始化页面
+    document.addEventListener('DOMContentLoaded', function() {
+      renderPalettePresets();
+    });
+
+    // 渲染调色板预设
+    function renderPalettePresets() {
+      const presetsContainer = document.getElementById('palette-presets');
+      presetsContainer.innerHTML = palettePresets.map(preset => `
+        <div class="palette-card" onclick="createPalette('${preset.id}')">
+          <div class="palette-name">${preset.name}</div>
+          <div class="palette-description">${preset.description}</div>
+          <div class="palette-colors">
+            ${preset.colors.slice(0, 8).map(color => `<div class="color-swatch" style="background-color: ${color};"></div>`).join('')}
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // 发送消息到插件代码
+    function sendMessage(type, data = {}) {
+      parent.postMessage({ pluginMessage: { type, ...data } }, '*');
+    }
+
+    // 提取颜色
+    function extractColors() {
+      const algorithmId = document.getElementById('extraction-algorithm').value;
+      const colorCount = parseInt(document.getElementById('color-count').value);
+      const resultsDiv = document.getElementById('extraction-results');
+      resultsDiv.innerHTML = '<div class="loading"><div class="spinner"></div>正在提取颜色...</div>';
+      sendMessage('extract-colors', { algorithmId, colorCount });
+    }
+
+    // 创建调色板
+    function createPalette(presetId) {
+      const resultsDiv = document.getElementById('operation-results');
+      resultsDiv.innerHTML = '<div class="loading"><div class="spinner"></div>正在创建调色板...</div>';
+      sendMessage('create-palette', { presetId });
+    }
+
+    // 分析颜色和谐度
+    function analyzeColorHarmony() {
+      const resultsDiv = document.getElementById('harmony-results');
+      resultsDiv.innerHTML = '<div class="loading"><div class="spinner"></div>正在分析颜色和谐度...</div>';
+      sendMessage('analyze-color-harmony');
+    }
+
+    // 生成相似颜色
+    function generateSimilarColors() {
+      const baseColor = document.getElementById('base-color').value;
+      const count = parseInt(document.getElementById('similar-count').value);
+      const resultsDiv = document.getElementById('similar-results');
+      resultsDiv.innerHTML = '<div class="loading"><div class="spinner"></div>正在生成相似颜色...</div>';
+      sendMessage('generate-similar-colors', { baseColor, count });
+    }
+
+    // 保存当前调色板
+    function saveCurrentPalette() {
+      const name = document.getElementById('palette-name').value;
+      const resultsDiv = document.getElementById('operation-results');
+      resultsDiv.innerHTML = '<div class="loading"><div class="spinner"></div>正在保存调色板...</div>';
+      sendMessage('save-palette', { name, colors: [] });
+    }
+
+    // 导出调色板
+    function exportPalette(format) {
+      const resultsDiv = document.getElementById('operation-results');
+      resultsDiv.innerHTML = '<div class="loading"><div class="spinner"></div>正在导出调色板...</div>';
+      sendMessage('export-palette', { format });
+    }
+
+    // 处理来自插件代码的消息
+    onmessage = (event) => {
+      const { type, ...data } = event.data.pluginMessage;
+      
+      switch (type) {
+        case 'colors-extracted':
+          handleColorsExtracted(data);
+          break;
+        case 'palette-created':
+        case 'palette-saved':
+        case 'palette-exported':
+          handleStatusMessage(data.message);
+          break;
+        case 'harmony-analyzed':
+          handleHarmonyAnalyzed(data);
+          break;
+        case 'similar-colors-generated':
+          handleSimilarColorsGenerated(data);
+          break;
+        case 'error':
+          handleErrorMessage(data.message);
+          break;
+      }
+    };
+
+    // 处理颜色提取结果
+    function handleColorsExtracted(data) {
+      const resultsDiv = document.getElementById('extraction-results');
+      let html = `<div class="status-message">${data.message}</div>`;
+      
+      if (data.colors && data.colors.length > 0) {
+        html += '<div class="color-list">';
+        data.colors.forEach(color => {
+          html += `
+            <div class="color-item">
+              <div class="color-swatch-large" style="background-color: ${color};"></div>
+              <div class="color-hex">${color}</div>
+            </div>
+          `;
+        });
+        html += '</div>';
+      }
+      
+      resultsDiv.innerHTML = html;
+    }
+
+    // 处理状态消息
+    function handleStatusMessage(message) {
+      const resultsDiv = document.getElementById('operation-results');
+      resultsDiv.innerHTML = `<div class="status-message">${message}</div>`;
+    }
+
+    // 处理错误消息
+    function handleErrorMessage(message) {
+      const resultsDiv = document.getElementById('operation-results');
+      resultsDiv.innerHTML = `<div class="error-message">${message}</div>`;
+    }
+
+    // 处理颜色和谐度分析结果
+    function handleHarmonyAnalyzed(data) {
+      const resultsDiv = document.getElementById('harmony-results');
+      const analysis = data.analysis;
+      
+      let html = `<div class="status-message">${data.message}</div>`;
+      html += '<div class="harmony-score">';
+      html += `
+        <div class="score-item">
+          <div class="score-value">${analysis.overall}</div>
+          <div class="score-label">总体</div>
+        </div>
+        <div class="score-item">
+          <div class="score-value">${analysis.contrast}</div>
+          <div class="score-label">对比度</div>
+        </div>
+        <div class="score-item">
+          <div class="score-value">${analysis.saturation}</div>
+          <div class="score-label">饱和度</div>
+        </div>
+        <div class="score-item">
+          <div class="score-value">${analysis.brightness}</div>
+          <div class="score-label">亮度</div>
+        </div>
+      `;
+      html += '</div>';
+      
+      if (analysis.suggestions && analysis.suggestions.length > 0) {
+        html += '<div class="suggestions"><h3 style="font-size: 14px; margin-bottom: 8px;">改进建议:</h3>';
+        analysis.suggestions.forEach(suggestion => {
+          html += `<div class="suggestion-item">${suggestion}</div>`;
+        });
+        html += '</div>';
+      }
+      
+      resultsDiv.innerHTML = html;
+    }
+
+    // 处理相似颜色生成结果
+    function handleSimilarColorsGenerated(data) {
+      const resultsDiv = document.getElementById('similar-results');
+      let html = `<div class="status-message">${data.message}</div>`;
+      
+      if (data.colors && data.colors.length > 0) {
+        html += '<div class="color-list">';
+        html += `
+          <div class="color-item">
+            <div class="color-swatch-large" style="background-color: ${data.baseColor}; border: 2px solid #0066cc;"></div>
+            <div class="color-hex">基础</div>
+          </div>
+        `;
+        data.colors.forEach(color => {
+          html += `
+            <div class="color-item">
+              <div class="color-swatch-large" style="background-color: ${color};"></div>
+              <div class="color-hex">${color}</div>
+            </div>
+          `;
+        });
+        html += '</div>';
+      }
+      
+      resultsDiv.innerHTML = html;
+    }
+  </script>
+</body>
+</html>

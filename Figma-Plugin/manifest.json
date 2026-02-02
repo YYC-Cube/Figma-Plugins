@@ -1,0 +1,30 @@
+{
+  "$schema": "https://figma.com/plugin-manifest/v1.json",
+  "name": "PostgreSQL Data Manager",
+  "id": "1598518192610769528",
+  "api": "1.0.0",
+  "main": "code.js",
+  "ui": "ui.html",
+  "permissions": [
+    "activeTab",
+    "files:read",
+    "files:write",
+    "network"
+  ],
+  "networkAccess": {
+    "allowedDomains": [
+      "*"
+    ]
+  },
+  "editorType": [
+    "figma"
+  ],
+  "enableProposedApi": false,
+  "relaunchButtons": [
+    {
+      "command": "show-panel",
+      "title": "Open PostgreSQL Manager"
+    }
+  ],
+  "icon": "icon.png"
+}

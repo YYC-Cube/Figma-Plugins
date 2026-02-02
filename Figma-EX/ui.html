@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Figma EX</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background-color: #f5f5f5;
+      color: #333;
+      line-height: 1.6;
+    }
+    
+    .container {
+      padding: 20px;
+      max-width: 400px;
+      margin: 0 auto;
+    }
+    
+    h1 {
+      font-size: 20px;
+      font-weight: 600;
+      margin-bottom: 20px;
+      color: #1a1a1a;
+      text-align: center;
+    }
+    
+    .section {
+      background-color: white;
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 16px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+    
+    .section h2 {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 12px;
+      color: #666;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    
+    .button {
+      display: block;
+      width: 100%;
+      padding: 10px 16px;
+      margin-bottom: 8px;
+      background-color: #007AFF;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+    
+    .button:hover {
+      background-color: #0056b3;
+    }
+    
+    .button-secondary {
+      background-color: #f0f0f0;
+      color: #333;
+    }
+    
+    .button-secondary:hover {
+      background-color: #e0e0e0;
+    }
+    
+    .button-group {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+    
+    .button-group .button {
+      flex: 1;
+      margin-bottom: 0;
+    }
+    
+    .input-group {
+      margin-bottom: 12px;
+    }
+    
+    .input-group label {
+      display: block;
+      font-size: 12px;
+      font-weight: 500;
+      margin-bottom: 4px;
+      color: #666;
+    }
+    
+    .input-group input,
+    .input-group select {
+      width: 100%;
+      padding: 8px 12px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 14px;
+    }
+    
+    .input-row {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+    
+    .input-row .input-group {
+      flex: 1;
+      margin-bottom: 0;
+    }
+    
+    .status {
+      font-size: 12px;
+      color: #666;
+      margin-bottom: 16px;
+      text-align: center;
+    }
+    
+    .divider {
+      height: 1px;
+      background-color: #eee;
+      margin: 16px 0;
+    }
+    
+    .footer {
+      text-align: center;
+      margin-top: 20px;
+      font-size: 12px;
+      color: #999;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Figma EX</h1>
+    
+    <div class="status" id="status">
+      已选择 <span id="selected-count">0</span> 个元素
+    </div>
+    
+    <!-- 对齐工具 -->
+    <div class="section">
+      <h2>对齐工具</h2>
+      <button class="button" id="align-center">居中对齐</button>
+      <div class="button-group">
+        <button class="button" id="distribute-horizontal">水平分布</button>
+        <button class="button" id="distribute-vertical">垂直分布</button>
+      </div>
+      <button class="button" id="resize-to-fit">调整大小以适应内容</button>
+    </div>
+    
+    <!-- 组件工具 -->
+    <div class="section">
+      <h2>组件工具</h2>
+      <button class="button" id="convert-to-components">转换为组件</button>
+      <div class="input-group">
+        <label for="rename-pattern">重命名模式</label>
+        <input type="text" id="rename-pattern" placeholder="Item-{index}">
+      </div>
+      <div class="input-row">
+        <div class="input-group">
+          <label for="start-index">起始索引</label>
+          <input type="number" id="start-index" value="1" min="1">
+        </div>
+        <button class="button" id="batch-rename">批量重命名</button>
+      </div>
+    </div>
+    
+    <!-- 复制工具 -->
+    <div class="section">
+      <h2>复制工具</h2>
+      <div class="input-row">
+        <div class="input-group">
+          <label for="rows">行数</label>
+          <input type="number" id="rows" value="2" min="1">
+        </div>
+        <div class="input-group">
+          <label for="columns">列数</label>
+          <input type="number" id="columns" value="2" min="1">
+        </div>
+      </div>
+      <div class="input-row">
+        <div class="input-group">
+          <label for="x-spacing">水平间距</label>
+          <input type="number" id="x-spacing" value="20" min="0">
+        </div>
+        <div class="input-group">
+          <label for="y-spacing">垂直间距</label>
+          <input type="number" id="y-spacing" value="20" min="0">
+        </div>
+      </div>
+      <button class="button" id="duplicate-grid">网格复制</button>
+    </div>
+    
+    <!-- 生成工具 -->
+    <div class="section">
+      <h2>生成工具</h2>
+      <div class="input-row">
+        <div class="input-group">
+          <label for="placeholder-count">数量</label>
+          <input type="number" id="placeholder-count" value="4" min="1" max="50">
+        </div>
+        <div class="input-group">
+          <label for="placeholder-type">类型</label>
+          <select id="placeholder-type">
+            <option value="text">文本</option>
+            <option value="image">图片</option>
+            <option value="rectangle">矩形</option>
+          </select>
+        </div>
+      </div>
+      <button class="button" id="generate-placeholders">生成占位符</button>
+      <button class="button" id="extract-styles">提取样式</button>
+    </div>
+    
+    <!-- 清理工具 -->
+    <div class="section">
+      <h2>清理工具</h2>
+      <button class="button button-secondary" id="clean-up">清理文件</button>
+    </div>
+    
+    <div class="divider"></div>
+    
+    <button class="button button-secondary" id="close">关闭</button>
+    
+    <div class="footer">
+      Figma EX v1.0.0
+    </div>
+  </div>
+  
+  <script>
+    // 发送消息到插件
+    function sendMessage(type, data = {}) {
+      parent.postMessage({ pluginMessage: { type, ...data } }, '*');
+    }
+    
+    // 监听来自插件的消息
+    window.addEventListener('message', (event) => {
+      if (event.data.pluginMessage) {
+        const message = event.data.pluginMessage;
+        if (message.type === 'init') {
+          document.getElementById('selected-count').textContent = message.selectedCount;
+        }
+      }
+    });
+    
+    // 绑定事件
+    document.getElementById('align-center').addEventListener('click', () => {
+      sendMessage('align-center');
+    });
+    
+    document.getElementById('distribute-horizontal').addEventListener('click', () => {
+      sendMessage('distribute-evenly', { axis: 'horizontal' });
+    });
+    
+    document.getElementById('distribute-vertical').addEventListener('click', () => {
+      sendMessage('distribute-evenly', { axis: 'vertical' });
+    });
+    
+    document.getElementById('resize-to-fit').addEventListener('click', () => {
+      sendMessage('resize-to-fit');
+    });
+    
+    document.getElementById('convert-to-components').addEventListener('click', () => {
+      sendMessage('convert-to-components');
+    });
+    
+    document.getElementById('batch-rename').addEventListener('click', () => {
+      const pattern = document.getElementById('rename-pattern').value;
+      const startIndex = parseInt(document.getElementById('start-index').value);
+      sendMessage('batch-rename', { pattern, startIndex });
+    });
+    
+    document.getElementById('duplicate-grid').addEventListener('click', () => {
+      const rows = parseInt(document.getElementById('rows').value);
+      const columns = parseInt(document.getElementById('columns').value);
+      const xSpacing = parseInt(document.getElementById('x-spacing').value);
+      const ySpacing = parseInt(document.getElementById('y-spacing').value);
+      sendMessage('duplicate-grid', { rows, columns, xSpacing, ySpacing });
+    });
+    
+    document.getElementById('generate-placeholders').addEventListener('click', () => {
+      const count = parseInt(document.getElementById('placeholder-count').value);
+      const type = document.getElementById('placeholder-type').value;
+      sendMessage('generate-placeholders', { count, type });
+    });
+    
+    document.getElementById('extract-styles').addEventListener('click', () => {
+      sendMessage('extract-styles');
+    });
+    
+    document.getElementById('clean-up').addEventListener('click', () => {
+      sendMessage('clean-up');
+    });
+    
+    document.getElementById('close').addEventListener('click', () => {
+      sendMessage('close');
+    });
+  </script>
+</body>
+</html>

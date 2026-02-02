@@ -1,0 +1,24 @@
+{
+  "name": "figma-grid-guide",
+  "version": "1.0.0",
+  "description": "Figma Grid Guide - 为Figma添加网格和参考线的插件",
+  "main": "code.js",
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc -w",
+    "dev": "tsc -w"
+  },
+  "keywords": [
+    "figma",
+    "figma-plugin",
+    "grid",
+    "guides",
+    "design"
+  ],
+  "author": "YYC³",
+  "license": "MIT",
+  "devDependencies": {
+    "@figma/plugin-typings": "^1.84.0",
+    "typescript": "^5.0.0"
+  }
+}

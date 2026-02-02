@@ -1,0 +1,8 @@
+{
+  "name": "Figma Remove BG",
+  "id": "figma-remove-bg",
+  "api": "1.0.0",
+  "main": "code.js",
+  "ui": "ui.html",
+  "permissions": ["document"]
+}

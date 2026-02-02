@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Figma to HTML</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background-color: #f5f5f5;
+      color: #1a1a1a;
+      line-height: 1.6;
+    }
+
+    .container {
+      padding: 20px;
+    }
+
+    h1 {
+      font-size: 20px;
+      font-weight: 600;
+      margin-bottom: 20px;
+      color: #1a1a1a;
+    }
+
+    h2 {
+      font-size: 16px;
+      font-weight: 600;
+      margin: 20px 0 10px;
+      color: #333333;
+    }
+
+    .section {
+      background-color: white;
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 16px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+
+    .btn {
+      background-color: #0066cc;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      padding: 8px 16px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background-color 0.2s;
+      margin-right: 8px;
+      margin-bottom: 8px;
+    }
+
+    .btn:hover {
+      background-color: #0052a3;
+    }
+
+    .btn-secondary {
+      background-color: #666666;
+    }
+
+    .btn-secondary:hover {
+      background-color: #525252;
+    }
+
+    .btn-sm {
+      padding: 6px 12px;
+      font-size: 12px;
+    }
+
+    .export-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 12px;
+      margin-top: 12px;
+    }
+
+    .export-card {
+      background-color: #f9f9f9;
+      border: 1px solid #e0e0e0;
+      border-radius: 6px;
+      padding: 12px;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .export-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      border-color: #0066cc;
+    }
+
+    .export-name {
+      font-weight: 600;
+      font-size: 14px;
+      margin-bottom: 4px;
+    }
+
+    .export-description {
+      font-size: 12px;
+      color: #666666;
+    }
+
+    .option-list {
+      margin: 12px 0;
+    }
+
+    .option-item {
+      display: flex;
+      align-items: center;
+      padding: 8px 12px;
+      background-color: #f9f9f9;
+      border-radius: 4px;
+      margin-bottom: 8px;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+
+    .option-item:hover {
+      background-color: #f0f0f0;
+    }
+
+    .option-checkbox {
+      margin-right: 12px;
+      width: 18px;
+      height: 18px;
+    }
+
+    .option-label {
+      flex: 1;
+      font-size: 13px;
+    }
+
+    .option-description {
+      font-size: 11px;
+      color: #666666;
+      margin-top: 2px;
+    }
+
+    .button-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 12px 0;
+    }
+
+    .status-message {
+      background-color: #e3f2fd;
+      color: #1976d2;
+      border-radius: 4px;
+      padding: 12px;
+      margin: 10px 0;
+      font-size: 14px;
+    }
+
+    .error-message {
+      background-color: #ffebee;
+      color: #c62828;
+      border-radius: 4px;
+      padding: 12px;
+      margin: 10px 0;
+      font-size: 14px;
+    }
+
+    .loading {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      color: #666666;
+    }
+
+    .spinner {
+      border: 2px solid #f3f3f3;
+      border-top: 2px solid #0066cc;
+      border-radius: 50%;
+      width: 16px;
+      height: 16px;
+      animation: spin 1s linear infinite;
+      margin-right: 8px;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .code-preview {
+      background-color: #1e1e1e;
+      color: #d4d4d4;
+      border-radius: 6px;
+      padding: 16px;
+      margin: 12px 0;
+      font-family: 'Courier New', monospace;
+      font-size: 12px;
+      overflow-x: auto;
+      max-height: 300px;
+      overflow-y: auto;
+    }
+
+    .code-preview pre {
+      margin: 0;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+    }
+
+    .analysis-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+      gap: 12px;
+      margin-top: 12px;
+    }
+
+    .stat-item {
+      background-color: #f9f9f9;
+      border-radius: 6px;
+      padding: 12px;
+      text-align: center;
+    }
+
+    .stat-value {
+      font-size: 24px;
+      font-weight: 600;
+      color: #0066cc;
+      margin-bottom: 4px;
+    }
+
+    .stat-label {
+      font-size: 12px;
+      color: #666666;
+    }
+
+    .optimization-list {
+      margin-top: 12px;
+    }
+
+    .optimization-item {
+      background-color: #f0f0f0;
+      border-radius: 4px;
+      padding: 10px 12px;
+      margin-bottom: 8px;
+      font-size: 13px;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .optimization-label {
+      flex: 1;
+    }
+
+    .optimization-value {
+      font-weight: 600;
+      color: #4CAF50;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🌐 Figma to HTML</h1>
+    
+    <!-- 导出选项 -->
+    <div class="section">
+      <h2>导出格式</h2>
+      <p style="font-size: 13px; color: #666666; margin-bottom: 12px;">选择要导出的代码格式</p>
+      <div class="export-grid" id="export-options"></div>
+    </div>
+
+    <!-- 代码生成选项 -->
+    <div class="section">
+      <h2>代码生成选项</h2>
+      <div class="option-list" id="code-gen-options"></div>
+    </div>
+
+    <!-- 操作按钮 -->
+    <div class="section">
+      <h2>操作</h2>
+      <div class="button-group">
+        <button class="btn" onclick="generateCode()">生成代码</button>
+        <button class="btn btn-secondary" onclick="previewCode()">预览代码</button>
+        <button class="btn btn-secondary" onclick="copyCode()">复制代码</button>
+        <button class="btn btn-secondary" onclick="downloadCode('zip')">下载ZIP</button>
+        <button class="btn btn-secondary" onclick="downloadCode('folder')">下载文件夹</button>
+      </div>
+    </div>
+
+    <!-- 设计分析 -->
+    <div class="section">
+      <h2>设计分析</h2>
+      <button class="btn" onclick="analyzeDesign()">分析设计</button>
+      <div id="analysis-results" style="margin-top: 16px;"></div>
+    </div>
+
+    <!-- 代码优化 -->
+    <div class="section">
+      <h2>代码优化</h2>
+      <button class="btn" onclick="optimizeCode()">优化代码</button>
+      <div id="optimization-results" style="margin-top: 16px;"></div>
+    </div>
+
+    <!-- 代码预览 -->
+    <div class="section">
+      <h2>代码预览</h2>
+      <div id="code-preview" class="code-preview" style="display: none;">
+        <pre id="code-content"></pre>
+      </div>
+    </div>
+
+    <!-- 操作结果 -->
+    <div class="section">
+      <h2>操作结果</h2>
+      <div id="operation-results"></div>
+    </div>
+  </div>
+
+  <script>
+    // 导出选项数据
+    const exportOptions = [
+      {
+        id: '1',
+        name: '纯HTML',
+        description: '导出为纯HTML文件',
+        type: 'HTML',
+        extensions: ['html']
+      },
+      {
+        id: '2',
+        name: 'HTML + CSS',
+        description: '导出为HTML和CSS文件',
+        type: 'HTML_CSS',
+        extensions: ['html', 'css']
+      },
+      {
+        id: '3',
+        name: 'React组件',
+        description: '导出为React组件',
+        type: 'REACT',
+        extensions: ['jsx', 'css']
+      },
+      {
+        id: '4',
+        name: 'Vue组件',
+        description: '导出为Vue组件',
+        type: 'VUE',
+        extensions: ['vue']
+      },
+      {
+        id: '5',
+        name: 'Tailwind CSS',
+        description: '导出为使用Tailwind CSS的HTML',
+        type: 'TAILWIND',
+        extensions: ['html']
+      },
+      {
+        id: '6',
+        name: 'Bootstrap',
+        description: '导出为使用Bootstrap的HTML',
+        type: 'BOOTSTRAP',
+        extensions: ['html']
+      }
+    ];
+
+    // 代码生成选项数据
+    const codeGenOptions = [
+      {
+        id: '1',
+        name: '语义化标签',
+        description: '使用语义化HTML标签',
+        type: 'SEMANTIC'
+      },
+      {
+        id: '2',
+        name: '响应式设计',
+        description: '生成响应式CSS代码',
+        type: 'RESPONSIVE'
+      },
+      {
+        id: '3',
+        name: 'CSS变量',
+        description: '使用CSS变量管理颜色和样式',
+        type: 'CSS_VARIABLES'
+      },
+      {
+        id: '4',
+        name: '类名优化',
+        description: '生成简洁的类名',
+        type: 'CLASS_OPTIMIZATION'
+      },
+      {
+        id: '5',
+        name: '内联样式',
+        description: '使用内联样式而非外部CSS',
+        type: 'INLINE_STYLES'
+      },
+      {
+        id: '6',
+        name: '图片优化',
+        description: '优化图片导出和引用',
+        type: 'IMAGE_OPTIMIZATION'
+      }
+    ];
+
+    let selectedExportType = 'HTML';
+    let selectedOptions = [];
+
+    // 初始化页面
+    document.addEventListener('DOMContentLoaded', function() {
+      renderExportOptions();
+      renderCodeGenOptions();
+    });
+
+    // 渲染导出选项
+    function renderExportOptions() {
+      const optionsContainer = document.getElementById('export-options');
+      optionsContainer.innerHTML = exportOptions.map(option => `
+        <div class="export-card" onclick="selectExportType('${option.type}')">
+          <div class="export-name">${option.name}</div>
+          <div class="export-description">${option.description}</div>
+        </div>
+      `).join('');
+    }
+
+    // 渲染代码生成选项
+    function renderCodeGenOptions() {
+      const optionsContainer = document.getElementById('code-gen-options');
+      optionsContainer.innerHTML = codeGenOptions.map(option => `
+        <div class="option-item" onclick="toggleOption('${option.type}')">
+          <input type="checkbox" class="option-checkbox" id="option-${option.type}" onchange="event.stopPropagation(); toggleOption('${option.type}')">
+          <div class="option-label">
+            <div>${option.name}</div>
+            <div class="option-description">${option.description}</div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // 选择导出类型
+    function selectExportType(type) {
+      selectedExportType = type;
+      document.querySelectorAll('.export-card').forEach(card => {
+        card.style.borderColor = card.querySelector('.export-name').textContent === 
+          exportOptions.find(o => o.type === type).name ? '#0066cc' : '#e0e0e0';
+      });
+    }
+
+    // 切换选项
+    function toggleOption(type) {
+      const checkbox = document.getElementById(`option-${type}`);
+      checkbox.checked = !checkbox.checked;
+      
+      if (checkbox.checked) {
+        selectedOptions.push(type);
+      } else {
+        selectedOptions = selectedOptions.filter(o => o !== type);
+      }
+    }
+
+    // 发送消息到插件代码
+    function sendMessage(type, data = {}) {
+      parent.postMessage({ pluginMessage: { type, ...data } }, '*');
+    }
+
+    // 生成代码
+    function generateCode() {
+      const resultsDiv = document.getElementById('operation-results');
+      resultsDiv.innerHTML = '<div class="loading"><div class="spinner"></div>正在生成代码...</div>';
+      sendMessage('generate-code', { exportType: selectedExportType, options: selectedOptions });
+    }
+
+    // 预览代码
+    function previewCode() {
+      const resultsDiv = document.getElementById('operation-results');
+      resultsDiv.innerHTML = '<div class="loading"><div class="spinner"></div>正在生成预览...</div>';
+      sendMessage('preview-code', { exportType: selectedExportType });
+    }
+
+    // 复制代码
+    function copyCode() {
+      const resultsDiv = document.getElementById('operation-results');
+      resultsDiv.innerHTML = '<div class="loading"><div class="spinner"></div>正在复制代码...</div>';
+      sendMessage('copy-code', { exportType: selectedExportType });
+    }
+
+    // 下载代码
+    function downloadCode(format) {
+      const resultsDiv = document.getElementById('operation-results');
+      resultsDiv.innerHTML = '<div class="loading"><div class="spinner"></div>正在准备下载...</div>';
+      sendMessage('download-code', { exportType: selectedExportType, format });
+    }
+
+    // 分析设计
+    function analyzeDesign() {
+      const resultsDiv = document.getElementById('analysis-results');
+      resultsDiv.innerHTML = '<div class="loading"><div class="spinner"></div>正在分析设计...</div>';
+      sendMessage('analyze-design');
+    }
+
+    // 优化代码
+    function optimizeCode() {
+      const resultsDiv = document.getElementById('optimization-results');
+      resultsDiv.innerHTML = '<div class="loading"><div class="spinner"></div>正在优化代码...</div>';
+      sendMessage('optimize-code');
+    }
+
+    // 处理来自插件代码的消息
+    onmessage = (event) => {
+      const { type, ...data } = event.data.pluginMessage;
+      
+      switch (type) {
+        case 'code-generated':
+        case 'code-copied':
+        case 'code-downloaded':
+          handleStatusMessage(data.message);
+          break;
+        case 'code-previewed':
+          handleCodePreview(data);
+          break;
+        case 'design-analyzed':
+          handleDesignAnalyzed(data);
+          break;
+        case 'code-optimized':
+          handleCodeOptimized(data);
+          break;
+        case 'error':
+          handleErrorMessage(data.message);
+          break;
+      }
+    };
+
+    // 处理状态消息
+    function handleStatusMessage(message) {
+      const resultsDiv = document.getElementById('operation-results');
+      resultsDiv.innerHTML = `<div class="status-message">${message}</div>`;
+    }
+
+    // 处理代码预览
+    function handleCodePreview(data) {
+      const resultsDiv = document.getElementById('operation-results');
+      resultsDiv.innerHTML = `<div class="status-message">${data.message}</div>`;
+      
+      const previewDiv = document.getElementById('code-preview');
+      const codeContent = document.getElementById('code-content');
+      previewDiv.style.display = 'block';
+      codeContent.textContent = data.code;
+    }
+
+    // 处理设计分析
+    function handleDesignAnalyzed(data) {
+      const resultsDiv = document.getElementById('analysis-results');
+      const analysis = data.analysis;
+      
+      let html = `<div class="status-message">${data.message}</div>`;
+      html += '<h3 style="font-size: 14px; margin: 16px 0 8px;">设计统计:</h3>';
+      html += '<div class="analysis-grid">';
+      html += `
+        <div class="stat-item">
+          <div class="stat-value">${analysis.totalElements}</div>
+          <div class="stat-label">总元素</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value">${analysis.textElements}</div>
+          <div class="stat-label">文本元素</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value">${analysis.imageElements}</div>
+          <div class="stat-label">图片元素</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value">${analysis.vectorElements}</div>
+          <div class="stat-label">矢量元素</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value">${analysis.componentCount}</div>
+          <div class="stat-label">组件数</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value">${analysis.estimatedCodeLines}</div>
+          <div class="stat-label">预估代码行数</div>
+        </div>
+      `;
+      html += '</div>';
+      html += `<p style="margin-top: 12px; font-size: 13px; color: #666666;">推荐框架: ${analysis.recommendedFramework}</p>`;
+      html += `<p style="font-size: 13px; color: #666666;">复杂度: ${analysis.complexity}</p>`;
+      
+      resultsDiv.innerHTML = html;
+    }
+
+    // 处理代码优化
+    function handleCodeOptimized(data) {
+      const resultsDiv = document.getElementById('optimization-results');
+      const optimizations = data.optimizations;
+      
+      let html = `<div class="status-message">${data.message}</div>`;
+      html += '<h3 style="font-size: 14px; margin: 16px 0 8px;">优化结果:</h3>';
+      html += '<div class="optimization-list">';
+      html += `
+        <div class="optimization-item">
+          <span class="optimization-label">移除未使用的CSS</span>
+          <span class="optimization-value">${optimizations.removedUnusedCSS} 行</span>
+        </div>
+        <div class="optimization-item">
+          <span class="optimization-label">合并相似样式</span>
+          <span class="optimization-value">${optimizations.mergedSimilarStyles} 项</span>
+        </div>
+        <div class="optimization-item">
+          <span class="optimization-label">优化图片</span>
+          <span class="optimization-value">${optimizations.optimizedImages} 张</span>
+        </div>
+        <div class="optimization-item">
+          <span class="optimization-label">减少代码大小</span>
+          <span class="optimization-value">${optimizations.reducedCodeSize}</span>
+        </div>
+        <div class="optimization-item">
+          <span class="optimization-label">提升性能</span>
+          <span class="optimization-value">${optimizations.improvedPerformance}</span>
+        </div>
+      `;
+      html += '</div>';
+      
+      resultsDiv.innerHTML = html;
+    }
+
+    // 处理错误消息
+    function handleErrorMessage(message) {
+      const resultsDiv = document.getElementById('operation-results');
+      resultsDiv.innerHTML = `<div class="error-message">${message}</div>`;
+    }
+  </script>
+</body>
+</html>

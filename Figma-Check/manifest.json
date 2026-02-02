@@ -1,0 +1,22 @@
+{
+  "name": "figma-postgres-check",
+  "id": "1598527464926992033",
+  "api": "1.0.0",
+  "main": "code.js",
+  "capabilities": [
+    "inspect",
+    "codegen"
+  ],
+  "enableProposedApi": false,
+  "documentAccess": "dynamic-page",
+  "editorType": [
+    "figma",
+    "dev"
+  ],
+  "ui": "ui.html",
+  "networkAccess": {
+    "allowedDomains": [
+      "*"
+    ]
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "name": "Figma Auto Layout Pro",
+  "id": "figma-auto-layout-pro",
+  "api": "1.0.0",
+  "main": "code.js",
+  "ui": "ui.html",
+  "permissions": ["document"]
+}

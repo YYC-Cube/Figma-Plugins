@@ -1,0 +1,8 @@
+{
+  "name": "Figma Image Palette",
+  "id": "figma-image-palette",
+  "api": "1.0.0",
+  "main": "code.js",
+  "ui": "ui.html",
+  "permissions": ["document"]
+}

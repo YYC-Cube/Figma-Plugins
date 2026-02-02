@@ -1,0 +1,22 @@
+{
+  "name": "figma-plugins-manager",
+  "version": "1.0.0",
+  "description": "Figma plugins collection and management tool",
+  "main": "code.js",
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc -w"
+  },
+  "keywords": [
+    "figma",
+    "figma-plugin",
+    "plugin-manager",
+    "plugin-collection"
+  ],
+  "author": "YYC³ Team",
+  "license": "MIT",
+  "devDependencies": {
+    "@figma/plugin-typings": "^1.80.0",
+    "typescript": "^5.0.0"
+  }
+}

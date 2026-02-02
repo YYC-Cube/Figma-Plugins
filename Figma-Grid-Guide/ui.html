@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Grid Guide</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background-color: #f5f5f5;
+      color: #333;
+      line-height: 1.6;
+    }
+    
+    .container {
+      padding: 20px;
+      max-width: 400px;
+      margin: 0 auto;
+    }
+    
+    h1 {
+      font-size: 20px;
+      font-weight: 600;
+      margin-bottom: 20px;
+      color: #1a1a1a;
+      text-align: center;
+    }
+    
+    .section {
+      background-color: white;
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 16px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+    
+    .section h2 {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 12px;
+      color: #666;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    
+    .button {
+      display: block;
+      width: 100%;
+      padding: 10px 16px;
+      margin-bottom: 8px;
+      background-color: #007AFF;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+    
+    .button:hover {
+      background-color: #0056b3;
+    }
+    
+    .button-secondary {
+      background-color: #f0f0f0;
+      color: #333;
+    }
+    
+    .button-secondary:hover {
+      background-color: #e0e0e0;
+    }
+    
+    .button-group {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+    
+    .button-group .button {
+      flex: 1;
+      margin-bottom: 0;
+    }
+    
+    .input-group {
+      margin-bottom: 12px;
+    }
+    
+    .input-group label {
+      display: block;
+      font-size: 12px;
+      font-weight: 500;
+      margin-bottom: 4px;
+      color: #666;
+    }
+    
+    .input-group input,
+    .input-group select,
+    .input-group textarea {
+      width: 100%;
+      padding: 8px 12px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 14px;
+    }
+    
+    .input-group textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+    
+    .input-row {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+    
+    .input-row .input-group {
+      flex: 1;
+      margin-bottom: 0;
+    }
+    
+    .status {
+      font-size: 12px;
+      color: #666;
+      margin-bottom: 16px;
+      text-align: center;
+    }
+    
+    .divider {
+      height: 1px;
+      background-color: #eee;
+      margin: 16px 0;
+    }
+    
+    .footer {
+      text-align: center;
+      margin-top: 20px;
+      font-size: 12px;
+      color: #999;
+    }
+    
+    /* 网格列表 */
+    .grid-list {
+      max-height: 200px;
+      overflow-y: auto;
+      margin-bottom: 16px;
+    }
+    
+    .grid-item {
+      padding: 12px;
+      border: 1px solid #eee;
+      border-radius: 6px;
+      margin-bottom: 8px;
+      background-color: #f9f9f9;
+    }
+    
+    .grid-item:hover {
+      background-color: #f0f0f0;
+    }
+    
+    .grid-item h3 {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+    
+    .grid-item p {
+      font-size: 12px;
+      color: #666;
+      margin-bottom: 8px;
+    }
+    
+    .grid-item-actions {
+      display: flex;
+      gap: 4px;
+    }
+    
+    .grid-item-actions button {
+      flex: 1;
+      padding: 4px 8px;
+      font-size: 12px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      background-color: white;
+      cursor: pointer;
+    }
+    
+    .grid-item-actions button:hover {
+      background-color: #f0f0f0;
+    }
+    
+    /* 参考线列表 */
+    .guide-list {
+      max-height: 200px;
+      overflow-y: auto;
+      margin-bottom: 16px;
+    }
+    
+    .guide-item {
+      padding: 8px 12px;
+      border: 1px solid #eee;
+      border-radius: 6px;
+      margin-bottom: 4px;
+      background-color: #f9f9f9;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .guide-item:hover {
+      background-color: #f0f0f0;
+    }
+    
+    .guide-item-info {
+      flex: 1;
+    }
+    
+    .guide-item-info p {
+      font-size: 12px;
+      color: #666;
+    }
+    
+    .guide-item-actions {
+      display: flex;
+      gap: 4px;
+    }
+    
+    .guide-item-actions button {
+      padding: 4px 8px;
+      font-size: 12px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      background-color: white;
+      cursor: pointer;
+    }
+    
+    .guide-item-actions button:hover {
+      background-color: #f0f0f0;
+    }
+    
+    /* 颜色选择器 */
+    .color-picker {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+    
+    .color-swatch {
+      width: 30px;
+      height: 30px;
+      border-radius: 4px;
+      border: 1px solid #ddd;
+      cursor: pointer;
+    }
+    
+    .color-swatch:hover {
+      border-color: #007AFF;
+    }
+    
+    /* 开关 */
+    .toggle {
+      position: relative;
+      display: inline-block;
+      width: 48px;
+      height: 24px;
+    }
+    
+    .toggle input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+    
+    .toggle-slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #ccc;
+      transition: .4s;
+      border-radius: 24px;
+    }
+    
+    .toggle-slider:before {
+      position: absolute;
+      content: "";
+      height: 18px;
+      width: 18px;
+      left: 3px;
+      bottom: 3px;
+      background-color: white;
+      transition: .4s;
+      border-radius: 50%;
+    }
+    
+    input:checked + .toggle-slider {
+      background-color: #007AFF;
+    }
+    
+    input:checked + .toggle-slider:before {
+      transform: translateX(24px);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Grid Guide</h1>
+    
+    <div class="status" id="status">
+      已选择 <span id="selected-frame-name">无框架</span>
+    </div>
+    
+    <!-- 网格管理 -->
+    <div class="section">
+      <h2>网格管理</h2>
+      <div class="input-group">
+        <label for="grid-name">网格名称</label>
+        <input type="text" id="grid-name" placeholder="例如：12列网格">
+      </div>
+      <div class="input-group">
+        <label for="grid-type">网格类型</label>
+        <select id="grid-type">
+          <option value="column">列网格</option>
+          <option value="row">行网格</option>
+          <option value="baseline">基线网格</option>
+        </select>
+      </div>
+      <div class="input-row">
+        <div class="input-group">
+          <label for="grid-count">数量</label>
+          <input type="number" id="grid-count" value="12" min="1">
+        </div>
+        <div class="input-group">
+          <label for="grid-spacing">间距</label>
+          <input type="number" id="grid-spacing" value="60" min="1">
+        </div>
+      </div>
+      <div class="input-row">
+        <div class="input-group">
+          <label for="grid-gutter"> gutter</label>
+          <input type="number" id="grid-gutter" value="20" min="0">
+        </div>
+        <div class="input-group">
+          <label for="grid-margin">外边距</label>
+          <input type="number" id="grid-margin" value="40" min="0">
+        </div>
+      </div>
+      <button class="button" id="create-grid">创建网格</button>
+      
+      <div class="grid-list" id="grid-list">
+        <!-- 网格列表将通过JavaScript动态添加 -->
+        <div style="text-align: center; color: #999;">
+          暂无网格
+        </div>
+      </div>
+    </div>
+    
+    <!-- 参考线管理 -->
+    <div class="section">
+      <h2>参考线管理</h2>
+      <div class="input-group">
+        <label for="guide-type">参考线类型</label>
+        <select id="guide-type">
+          <option value="horizontal">水平</option>
+          <option value="vertical">垂直</option>
+        </select>
+      </div>
+      <div class="input-group">
+        <label for="guide-position">位置</label>
+        <input type="number" id="guide-position" value="100" min="0">
+      </div>
+      <button class="button" id="create-guide">创建参考线</button>
+      <button class="button button-secondary" id="clear-all-guides">清除所有参考线</button>
+      
+      <div class="guide-list" id="guide-list">
+        <!-- 参考线列表将通过JavaScript动态添加 -->
+        <div style="text-align: center; color: #999;">
+          暂无参考线
+        </div>
+      </div>
+    </div>
+    
+    <!-- 对齐工具 -->
+    <div class="section">
+      <h2>对齐工具</h2>
+      <button class="button" id="align-to-grid">对齐到网格</button>
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 12px;">
+        <span style="font-size: 12px; color: #666;">网格吸附</span>
+        <label class="toggle">
+          <input type="checkbox" id="snap-to-grid">
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+    </div>
+    
+    <div class="divider"></div>
+    
+    <button class="button button-secondary" id="close">关闭</button>
+    
+    <div class="footer">
+      Grid Guide v1.0.0
+    </div>
+  </div>
+  
+  <script>
+    // 状态
+    let grids = [];
+    let guides = [];
+    let selectedFrame = null;
+    
+    // 发送消息到插件
+    function sendMessage(type, data = {}) {
+      parent.postMessage({ pluginMessage: { type, ...data } }, '*');
+    }
+    
+    // 监听来自插件的消息
+    window.addEventListener('message', (event) => {
+      if (event.data.pluginMessage) {
+        const message = event.data.pluginMessage;
+        if (message.type === 'init') {
+          selectedFrame = message.selectedFrame;
+          document.getElementById('selected-frame-name').textContent = selectedFrame ? selectedFrame.name : '无框架';
+          grids = message.grids || [];
+          guides = message.guides || [];
+          updateGridList();
+          updateGuideList();
+        } else if (message.type === 'grids-updated') {
+          grids = message.grids || [];
+          updateGridList();
+        } else if (message.type === 'guides-updated') {
+          guides = message.guides || [];
+          updateGuideList();
+        }
+      }
+    });
+    
+    // 更新网格列表
+    function updateGridList() {
+      const gridList = document.getElementById('grid-list');
+      if (grids.length === 0) {
+        gridList.innerHTML = '<div style="text-align: center; color: #999;">暂无网格</div>';
+        return;
+      }
+      
+      gridList.innerHTML = grids.map(grid => `
+        <div class="grid-item" data-grid-id="${grid.id}">
+          <h3>${grid.name}</h3>
+          <p>${grid.type === 'column' ? '列网格' : grid.type === 'row' ? '行网格' : '基线网格'} | ${grid.count}个 | ${grid.spacing}px间距</p>
+          <div class="grid-item-actions">
+            <button onclick="toggleGrid('${grid.id}')">${grid.visible ? '隐藏' : '显示'}</button>
+            <button onclick="alignToGrid('${grid.id}')">对齐</button>
+            <button onclick="deleteGrid('${grid.id}')">删除</button>
+          </div>
+        </div>
+      `).join('');
+    }
+    
+    // 更新参考线列表
+    function updateGuideList() {
+      const guideList = document.getElementById('guide-list');
+      if (guides.length === 0) {
+        guideList.innerHTML = '<div style="text-align: center; color: #999;">暂无参考线</div>';
+        return;
+      }
+      
+      guideList.innerHTML = guides.map(guide => `
+        <div class="guide-item" data-guide-id="${guide.id}">
+          <div class="guide-item-info">
+            <p>${guide.type === 'horizontal' ? '水平' : '垂直'}参考线 | ${guide.position}px</p>
+          </div>
+          <div class="guide-item-actions">
+            <button onclick="deleteGuide('${guide.id}')">删除</button>
+          </div>
+        </div>
+      `).join('');
+    }
+    
+    // 切换网格显示
+    function toggleGrid(gridId) {
+      sendMessage('toggle-grid', { gridId });
+    }
+    
+    // 对齐到网格
+    function alignToGrid(gridId) {
+      sendMessage('align-to-grid', { gridId });
+    }
+    
+    // 删除网格
+    function deleteGrid(gridId) {
+      sendMessage('delete-grid', { gridId });
+    }
+    
+    // 删除参考线
+    function deleteGuide(guideId) {
+      sendMessage('delete-guides', { guideIds: [guideId] });
+    }
+    
+    // 绑定事件
+    document.getElementById('create-grid').addEventListener('click', () => {
+      if (!selectedFrame) {
+        alert('请先选择一个框架');
+        return;
+      }
+      
+      const grid = {
+        name: document.getElementById('grid-name').value || '新网格',
+        type: document.getElementById('grid-type').value,
+        count: parseInt(document.getElementById('grid-count').value),
+        spacing: parseInt(document.getElementById('grid-spacing').value),
+        gutter: parseInt(document.getElementById('grid-gutter').value),
+        margin: parseInt(document.getElementById('grid-margin').value),
+        color: { r: 0, g: 0, b: 0, a: 0.1 },
+        visible: true
+      };
+      
+      sendMessage('create-grid', { grid });
+    });
+    
+    document.getElementById('create-guide').addEventListener('click', () => {
+      const guide = {
+        type: document.getElementById('guide-type').value,
+        position: parseInt(document.getElementById('guide-position').value),
+        color: { r: 0, g: 0, b: 1, a: 0.5 }
+      };
+      
+      sendMessage('create-guides', { guides: [guide] });
+    });
+    
+    document.getElementById('clear-all-guides').addEventListener('click', () => {
+      sendMessage('clear-all-guides');
+    });
+    
+    document.getElementById('snap-to-grid').addEventListener('change', (e) => {
+      sendMessage('snap-to-grid', { enabled: e.target.checked });
+    });
+    
+    document.getElementById('close').addEventListener('click', () => {
+      sendMessage('close');
+    });
+  </script>
+</body>
+</html>

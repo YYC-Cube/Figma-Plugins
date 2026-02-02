@@ -1,0 +1,16 @@
+{
+  "name": "Figma Gleef",
+  "id": "figma-gleef",
+  "api": "1.0.0",
+  "main": "code.js",
+  "ui": "ui.html",
+  "menu": [
+    {
+      "name": "Gleef",
+      "command": "show-ui"
+    }
+  ],
+  "permissions": [
+    "document"
+  ]
+}

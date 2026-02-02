@@ -1,0 +1,24 @@
+{
+  "name": "figma-gleef",
+  "version": "1.0.0",
+  "description": "Figma Gleef - 为Figma添加创意效果和滤镜的插件",
+  "main": "code.js",
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc -w",
+    "dev": "tsc -w"
+  },
+  "keywords": [
+    "figma",
+    "figma-plugin",
+    "effects",
+    "filters",
+    "design"
+  ],
+  "author": "YYC³",
+  "license": "MIT",
+  "devDependencies": {
+    "@figma/plugin-typings": "^1.84.0",
+    "typescript": "^5.0.0"
+  }
+}

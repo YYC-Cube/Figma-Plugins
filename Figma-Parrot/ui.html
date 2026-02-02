@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Figma Parrot</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background-color: #f5f5f5;
+      color: #1a1a1a;
+      line-height: 1.6;
+    }
+
+    .container {
+      padding: 20px;
+    }
+
+    h1 {
+      font-size: 20px;
+      font-weight: 600;
+      margin-bottom: 20px;
+      color: #1a1a1a;
+    }
+
+    h2 {
+      font-size: 16px;
+      font-weight: 600;
+      margin: 20px 0 10px;
+      color: #333333;
+    }
+
+    .section {
+      background-color: white;
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 16px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+
+    .btn {
+      background-color: #0066cc;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      padding: 8px 16px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background-color 0.2s;
+      margin-right: 8px;
+      margin-bottom: 8px;
+    }
+
+    .btn:hover {
+      background-color: #0052a3;
+    }
+
+    .btn-secondary {
+      background-color: #666666;
+    }
+
+    .btn-secondary:hover {
+      background-color: #525252;
+    }
+
+    .btn-sm {
+      padding: 6px 12px;
+      font-size: 12px;
+    }
+
+    .mode-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: 12px;
+      margin-top: 12px;
+    }
+
+    .mode-card {
+      background-color: #f9f9f9;
+      border: 1px solid #e0e0e0;
+      border-radius: 6px;
+      padding: 12px;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .mode-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      border-color: #0066cc;
+    }
+
+    .mode-name {
+      font-weight: 600;
+      font-size: 14px;
+      margin-bottom: 4px;
+    }
+
+    .mode-description {
+      font-size: 12px;
+      color: #666666;
+    }
+
+    .control-group {
+      margin: 12px 0;
+    }
+
+    .control-row {
+      display: flex;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .control-label {
+      width: 120px;
+      font-size: 13px;
+      color: #333333;
+    }
+
+    .control-input {
+      flex: 1;
+      padding: 6px 8px;
+      border: 1px solid #e0e0e0;
+      border-radius: 4px;
+      font-size: 13px;
+    }
+
+    .control-select {
+      flex: 1;
+      padding: 6px 8px;
+      border: 1px solid #e0e0e0;
+      border-radius: 4px;
+      font-size: 13px;
+    }
+
+    .button-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 12px 0;
+    }
+
+    .status-message {
+      background-color: #e3f2fd;
+      color: #1976d2;
+      border-radius: 4px;
+      padding: 12px;
+      margin: 10px 0;
+      font-size: 14px;
+    }
+
+    .error-message {
+      background-color: #ffebee;
+      color: #c62828;
+      border-radius: 4px;
+      padding: 12px;
+      margin: 10px 0;
+      font-size: 14px;
+    }
+
+    .loading {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      color: #666666;
+    }
+
+    .spinner {
+      border: 2px solid #f3f3f3;
+      border-top: 2px solid #0066cc;
+      border-radius: 50%;
+      width: 16px;
+      height: 16px;
+      animation: spin 1s linear infinite;
+      margin-right: 8px;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🦜 Figma Parrot</h1>
+    
+    <!-- 复制模式 -->
+    <div class="section">
+      <h2>复制模式</h2>
+      <p style="font-size: 13px; color: #666666; margin-bottom: 12px;">选择复制模式并配置参数</p>
+      <div class="mode-grid" id="duplication-modes"></div>
+    </div>
+
+    <!-- 线性复制 -->
+    <div class="section">
+      <h2>线性复制</h2>
+      <div class="control-group">
+        <div class="control-row">
+          <label class="control-label">复制数量:</label>
+          <input type="number" class="control-input" id="linear-count" value="5" min="1" max="100">
+        </div>
+        <div class="control-row">
+          <label class="control-label">方向:</label>
+          <select class="control-select" id="linear-direction">
+            <option value="horizontal">水平</option>
+            <option value="vertical">垂直</option>
+            <option value="diagonal">对角</option>
+          </select>
+        </div>
+        <div class="control-row">
+          <label class="control-label">间距:</label>
+          <input type="number" class="control-input" id="linear-spacing" value="20" min="1" max="500">
+        </div>
+      </div>
+      <button class="btn" onclick="duplicateLinear()">线性复制</button>
+    </div>
+
+    <!-- 网格复制 -->
+    <div class="section">
+      <h2>网格复制</h2>
+      <div class="control-group">
+        <div class="control-row">
+          <label class="control-label">行数:</label>
+          <input type="number" class="control-input" id="grid-rows" value="3" min="1" max="20">
+        </div>
+        <div class="control-row">
+          <label class="control-label">列数:</label>
+          <input type="number" class="control-input" id="grid-columns" value="3" min="1" max="20">
+        </div>
+        <div class="control-row">
+          <label class="control-label">水平间距:</label>
+          <input type="number" class="control-input" id="grid-h-spacing" value="20" min="1" max="500">
+        </div>
+        <div class="control-row">
+          <label class="control-label">垂直间距:</label>
+          <input type="number" class="control-input" id="grid-v-spacing" value="20" min="1" max="500">
+        </div>
+      </div>
+      <button class="btn" onclick="duplicateGrid()">网格复制</button>
+    </div>
+
+    <!-- 圆形复制 -->
+    <div class="section">
+      <h2>圆形复制</h2>
+      <div class="control-group">
+        <div class="control-row">
+          <label class="control-label">复制数量:</label>
+          <input type="number" class="control-input" id="circular-count" value="8" min="1" max="50">
+        </div>
+        <div class="control-row">
+          <label class="control-label">半径:</label>
+          <input type="number" class="control-input" id="circular-radius" value="100" min="10" max="1000">
+        </div>
+        <div class="control-row">
+          <label class="control-label">起始角度:</label>
+          <input type="number" class="control-input" id="circular-start-angle" value="0" min="0" max="360">
+        </div>
+        <div class="control-row">
+          <label class="control-label">结束角度:</label>
+          <input type="number" class="control-input" id="circular-end-angle" value="360" min="0" max="360">
+        </div>
+      </div>
+      <button class="btn" onclick="duplicateCircular()">圆形复制</button>
+    </div>
+
+    <!-- 随机分布 -->
+    <div class="section">
+      <h2>随机分布</h2>
+      <div class="control-group">
+        <div class="control-row">
+          <label class="control-label">复制数量:</label>
+          <input type="number" class="control-input" id="random-count" value="10" min="1" max="100">
+        </div>
+        <div class="control-row">
+          <label class="control-label">区域宽度:</label>
+          <input type="number" class="control-input" id="random-width" value="500" min="100" max="2000">
+        </div>
+        <div class="control-row">
+          <label class="control-label">区域高度:</label>
+          <input type="number" class="control-input" id="random-height" value="500" min="100" max="2000">
+        </div>
+      </div>
+      <button class="btn" onclick="duplicateRandom()">随机分布</button>
+    </div>
+
+    <!-- 变换效果 -->
+    <div class="section">
+      <h2>变换效果</h2>
+      <div class="control-group">
+        <div class="control-row">
+          <label class="control-label">变换类型:</label>
+          <select class="control-select" id="transform-type">
+            <option value="SCALE">缩放</option>
+            <option value="ROTATION">旋转</option>
+            <option value="OPACITY">透明度</option>
+            <option value="COLOR">颜色渐变</option>
+          </select>
+        </div>
+        <div class="control-row">
+          <label class="control-label">起始值:</label>
+          <input type="number" class="control-input" id="transform-start" value="1" step="0.1">
+        </div>
+        <div class="control-row">
+          <label class="control-label">结束值:</label>
+          <input type="number" class="control-input" id="transform-end" value="2" step="0.1">
+        </div>
+      </div>
+      <button class="btn" onclick="applyTransform()">应用变换</button>
+    </div>
+
+    <!-- 快捷操作 -->
+    <div class="section">
+      <h2>快捷操作</h2>
+      <div class="button-group">
+        <button class="btn" onclick="smartDuplicate('alternating')">交替复制</button>
+        <button class="btn" onclick="smartDuplicate('staggered')">交错复制</button>
+        <button class="btn" onclick="mirrorDuplicate('horizontal')">水平镜像</button>
+        <button class="btn" onclick="mirrorDuplicate('vertical')">垂直镜像</button>
+      </div>
+    </div>
+
+    <!-- 操作结果 -->
+    <div class="section">
+      <h2>操作结果</h2>
+      <div id="operation-results"></div>
+    </div>
+  </div>
+
+  <script>
+    // 复制模式数据
+    const duplicationModes = [
+      {
+        id: '1',
+        name: '线性复制',
+        description: '沿直线方向复制元素',
+        type: 'LINEAR'
+      },
+      {
+        id: '2',
+        name: '网格复制',
+        description: '按网格布局复制元素',
+        type: 'GRID'
+      },
+      {
+        id: '3',
+        name: '圆形复制',
+        description: '沿圆形路径复制元素',
+        type: 'CIRCULAR'
+      },
+      {
+        id: '4',
+        name: '随机分布',
+        description: '随机分布复制的元素',
+        type: 'RANDOM'
+      }
+    ];
+
+    // 初始化页面
+    document.addEventListener('DOMContentLoaded', function() {
+      renderDuplicationModes();
+    });
+
+    // 渲染复制模式
+    function renderDuplicationModes() {
+      const modesContainer = document.getElementById('duplication-modes');
+      modesContainer.innerHTML = duplicationModes.map(mode => `
+        <div class="mode-card">
+          <div class="mode-name">${mode.name}</div>
+          <div class="mode-description">${mode.description}</div>
+        </div>
+      `).join('');
+    }
+
+    // 发送消息到插件代码
+    function sendMessage(type, data = {}) {
+      parent.postMessage({ pluginMessage: { type, ...data } }, '*');
+    }
+
+    // 线性复制
+    function duplicateLinear() {
+      const count = parseInt(document.getElementById('linear-count').value);
+      const direction = document.getElementById('linear-direction').value;
+      const spacing = parseInt(document.getElementById('linear-spacing').value);
+      const resultsDiv = document.getElementById('operation-results');
+      resultsDiv.innerHTML = '<div class="loading"><div class="spinner"></div>正在线性复制...</div>';
+      sendMessage('duplicate-linear', { count, direction, spacing });
+    }
+
+    // 网格复制
+    function duplicateGrid() {
+      const rows = parseInt(document.getElementById('grid-rows').value);
+      const columns = parseInt(document.getElementById('grid-columns').value);
+      const horizontalSpacing = parseInt(document.getElementById('grid-h-spacing').value);
+      const verticalSpacing = parseInt(document.getElementById('grid-v-spacing').value);
+      const resultsDiv = document.getElementById('operation-results');
+      resultsDiv.innerHTML = '<div class="loading"><div class="spinner"></div>正在网格复制...</div>';
+      sendMessage('duplicate-grid', { rows, columns, horizontalSpacing, verticalSpacing });
+    }
+
+    // 圆形复制
+    function duplicateCircular() {
+      const count = parseInt(document.getElementById('circular-count').value);
+      const radius = parseInt(document.getElementById('circular-radius').value);
+      const startAngle = parseInt(document.getElementById('circular-start-angle').value);
+      const endAngle = parseInt(document.getElementById('circular-end-angle').value);
+      const resultsDiv = document.getElementById('operation-results');
+      resultsDiv.innerHTML = '<div class="loading"><div class="spinner"></div>正在圆形复制...</div>';
+      sendMessage('duplicate-circular', { count, radius, startAngle, endAngle });
+    }
+
+    // 随机分布
+    function duplicateRandom() {
+      const count = parseInt(document.getElementById('random-count').value);
+      const areaWidth = parseInt(document.getElementById('random-width').value);
+      const areaHeight = parseInt(document.getElementById('random-height').value);
+      const resultsDiv = document.getElementById('operation-results');
+      resultsDiv.innerHTML = '<div class="loading"><div class="spinner"></div>正在随机分布...</div>';
+      sendMessage('duplicate-random', { count, areaWidth, areaHeight });
+    }
+
+    // 应用变换
+    function applyTransform() {
+      const transformType = document.getElementById('transform-type').value;
+      const startValue = parseFloat(document.getElementById('transform-start').value);
+      const endValue = parseFloat(document.getElementById('transform-end').value);
+      const resultsDiv = document.getElementById('operation-results');
+      resultsDiv.innerHTML = '<div class="loading"><div class="spinner"></div>正在应用变换...</div>';
+      sendMessage('apply-transform', { transformType, startValue, endValue });
+    }
+
+    // 智能复制
+    function smartDuplicate(pattern) {
+      const resultsDiv = document.getElementById('operation-results');
+      resultsDiv.innerHTML = '<div class="loading"><div class="spinner"></div>正在智能复制...</div>';
+      sendMessage('smart-duplicate', { pattern });
+    }
+
+    // 镜像复制
+    function mirrorDuplicate(direction) {
+      const resultsDiv = document.getElementById('operation-results');
+      resultsDiv.innerHTML = '<div class="loading"><div class="spinner"></div>正在镜像复制...</div>';
+      sendMessage('mirror-duplicate', { direction });
+    }
+
+    // 处理来自插件代码的消息
+    onmessage = (event) => {
+      const { type, ...data } = event.data.pluginMessage;
+      
+      switch (type) {
+        case 'duplicated':
+        case 'transform-applied':
+        case 'smart-duplicated':
+        case 'mirrored':
+          handleStatusMessage(data.message);
+          break;
+        case 'error':
+          handleErrorMessage(data.message);
+          break;
+      }
+    };
+
+    // 处理状态消息
+    function handleStatusMessage(message) {
+      const resultsDiv = document.getElementById('operation-results');
+      resultsDiv.innerHTML = `<div class="status-message">${message}</div>`;
+    }
+
+    // 处理错误消息
+    function handleErrorMessage(message) {
+      const resultsDiv = document.getElementById('operation-results');
+      resultsDiv.innerHTML = `<div class="error-message">${message}</div>`;
+    }
+  </script>
+</body>
+</html>

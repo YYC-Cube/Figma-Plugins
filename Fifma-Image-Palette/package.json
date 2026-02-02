@@ -1,0 +1,23 @@
+{
+  "name": "figma-image-palette",
+  "version": "1.0.0",
+  "description": "Extract colors from images and create color palettes",
+  "main": "code.js",
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc -w"
+  },
+  "keywords": [
+    "figma",
+    "figma-plugin",
+    "color-palette",
+    "image-colors",
+    "color-extraction"
+  ],
+  "author": "YYC³ Team",
+  "license": "MIT",
+  "devDependencies": {
+    "@figma/plugin-typings": "^1.80.0",
+    "typescript": "^5.0.0"
+  }
+}

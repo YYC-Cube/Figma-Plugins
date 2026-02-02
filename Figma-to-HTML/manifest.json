@@ -1,0 +1,8 @@
+{
+  "name": "Figma to HTML",
+  "id": "figma-to-html",
+  "api": "1.0.0",
+  "main": "code.js",
+  "ui": "ui.html",
+  "permissions": ["document"]
+}

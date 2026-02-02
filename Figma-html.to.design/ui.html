@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HTML to Design</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background-color: #f5f5f5;
+      color: #333;
+      line-height: 1.6;
+    }
+    
+    .container {
+      padding: 20px;
+      max-width: 500px;
+      margin: 0 auto;
+    }
+    
+    h1 {
+      font-size: 20px;
+      font-weight: 600;
+      margin-bottom: 20px;
+      color: #1a1a1a;
+      text-align: center;
+    }
+    
+    .section {
+      background-color: white;
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 16px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+    
+    .section h2 {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 12px;
+      color: #666;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    
+    .button {
+      display: block;
+      width: 100%;
+      padding: 10px 16px;
+      margin-bottom: 8px;
+      background-color: #007AFF;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+    
+    .button:hover {
+      background-color: #0056b3;
+    }
+    
+    .button-secondary {
+      background-color: #f0f0f0;
+      color: #333;
+    }
+    
+    .button-secondary:hover {
+      background-color: #e0e0e0;
+    }
+    
+    .button-group {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+    
+    .button-group .button {
+      flex: 1;
+      margin-bottom: 0;
+    }
+    
+    .input-group {
+      margin-bottom: 12px;
+    }
+    
+    .input-group label {
+      display: block;
+      font-size: 12px;
+      font-weight: 500;
+      margin-bottom: 4px;
+      color: #666;
+    }
+    
+    .input-group input,
+    .input-group select,
+    .input-group textarea {
+      width: 100%;
+      padding: 8px 12px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 14px;
+    }
+    
+    .input-group textarea {
+      resize: vertical;
+      min-height: 200px;
+      font-family: 'Courier New', Courier, monospace;
+      font-size: 12px;
+    }
+    
+    .input-row {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+    
+    .input-row .input-group {
+      flex: 1;
+      margin-bottom: 0;
+    }
+    
+    .status {
+      font-size: 12px;
+      color: #666;
+      margin-bottom: 16px;
+      text-align: center;
+    }
+    
+    .divider {
+      height: 1px;
+      background-color: #eee;
+      margin: 16px 0;
+    }
+    
+    .footer {
+      text-align: center;
+      margin-top: 20px;
+      font-size: 12px;
+      color: #999;
+    }
+    
+    /* 选项设置 */
+    .options {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+    
+    .option-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 0;
+    }
+    
+    .option-item label {
+      font-size: 13px;
+      color: #333;
+    }
+    
+    /* 开关 */
+    .toggle {
+      position: relative;
+      display: inline-block;
+      width: 48px;
+      height: 24px;
+    }
+    
+    .toggle input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+    
+    .toggle-slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #ccc;
+      transition: .4s;
+      border-radius: 24px;
+    }
+    
+    .toggle-slider:before {
+      position: absolute;
+      content: "";
+      height: 18px;
+      width: 18px;
+      left: 3px;
+      bottom: 3px;
+      background-color: white;
+      transition: .4s;
+      border-radius: 50%;
+    }
+    
+    input:checked + .toggle-slider {
+      background-color: #007AFF;
+    }
+    
+    input:checked + .toggle-slider:before {
+      transform: translateX(24px);
+    }
+    
+    /* 解析结果 */
+    .parse-result {
+      padding: 12px;
+      background-color: #f0f9ff;
+      border: 1px solid #007AFF;
+      border-radius: 6px;
+      margin-bottom: 16px;
+    }
+    
+    .parse-result p {
+      font-size: 13px;
+      color: #0056b3;
+      margin-bottom: 4px;
+    }
+    
+    /* 示例代码 */
+    .examples {
+      margin-bottom: 16px;
+    }
+    
+    .example-item {
+      padding: 8px 12px;
+      border: 1px solid #eee;
+      border-radius: 6px;
+      margin-bottom: 8px;
+      background-color: #f9f9f9;
+      cursor: pointer;
+    }
+    
+    .example-item:hover {
+      background-color: #f0f0f0;
+    }
+    
+    .example-item p {
+      font-size: 12px;
+      color: #666;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>HTML to Design</h1>
+    
+    <!-- HTML输入 -->
+    <div class="section">
+      <h2>HTML代码</h2>
+      <div class="input-group">
+        <label for="html-input">输入HTML代码</label>
+        <textarea id="html-input" placeholder="<!DOCTYPE html>
+<html>
+<head>
+  <title>Example</title>
+</head>
+<body>
+  <div>
+    <h1>Hello World</h1>
+    <p>This is a paragraph.</p>
+    <button>Click Me</button>
+  </div>
+</body>
+</html>"></textarea>
+      </div>
+      
+      <!-- 示例代码 -->
+      <div class="examples">
+        <h3 style="font-size: 12px; font-weight: 600; margin-bottom: 8px; color: #999;">示例代码</h3>
+        <div class="example-item" data-example="basic">
+          <p>基础HTML结构</p>
+        </div>
+        <div class="example-item" data-example="form">
+          <p>表单元素</p>
+        </div>
+        <div class="example-item" data-example="card">
+          <p>卡片布局</p>
+        </div>
+      </div>
+      
+      <button class="button" id="parse-html">解析HTML</button>
+      
+      <!-- 解析结果 -->
+      <div class="parse-result" id="parse-result" style="display: none;">
+        <p id="parse-message"></p>
+      </div>
+    </div>
+    
+    <!-- 转换选项 -->
+    <div class="section">
+      <h2>转换选项</h2>
+      <div class="options">
+        <div class="option-item">
+          <label for="include-styles">包含样式</label>
+          <label class="toggle">
+            <input type="checkbox" id="include-styles" checked>
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+        <div class="option-item">
+          <label for="include-images">包含图片</label>
+          <label class="toggle">
+            <input type="checkbox" id="include-images" checked>
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+        <div class="option-item">
+          <label for="preserve-layout">保留布局</label>
+          <label class="toggle">
+            <input type="checkbox" id="preserve-layout" checked>
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+        <div class="option-item">
+          <label for="use-auto-layout">使用自动布局</label>
+          <label class="toggle">
+            <input type="checkbox" id="use-auto-layout" checked>
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+      </div>
+      
+      <button class="button" id="convert-to-design">转换为设计</button>
+      <button class="button button-secondary" id="clear-design">清除设计</button>
+    </div>
+    
+    <div class="divider"></div>
+    
+    <button class="button button-secondary" id="close">关闭</button>
+    
+    <div class="footer">
+      HTML to Design v1.0.0
+    </div>
+  </div>
+  
+  <script>
+    // 示例代码
+    const examples = {
+      basic: `<!DOCTYPE html>
+<html>
+<head>
+  <title>Basic Example</title>
+</head>
+<body>
+  <div>
+    <h1>Hello World</h1>
+    <p>This is a paragraph.</p>
+    <button>Click Me</button>
+  </div>
+</body>
+</html>`,
+      form: `<!DOCTYPE html>
+<html>
+<head>
+  <title>Form Example</title>
+</head>
+<body>
+  <form>
+    <h2>Contact Form</h2>
+    <div>
+      <label>Name:</label>
+      <input type="text" placeholder="Your name">
+    </div>
+    <div>
+      <label>Email:</label>
+      <input type="email" placeholder="Your email">
+    </div>
+    <div>
+      <label>Message:</label>
+      <textarea placeholder="Your message"></textarea>
+    </div>
+    <button type="submit">Submit</button>
+  </form>
+</body>
+</html>`,
+      card: `<!DOCTYPE html>
+<html>
+<head>
+  <title>Card Example</title>
+  <style>
+    .card {
+      width: 300px;
+      padding: 20px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .card h3 {
+      margin-top: 0;
+    }
+    .card img {
+      width: 100%;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <img src="image.jpg" alt="Card image">
+    <h3>Card Title</h3>
+    <p>This is a sample card with an image and text.</p>
+    <button>Learn More</button>
+  </div>
+</body>
+</html>`
+    };
+    
+    // 发送消息到插件
+    function sendMessage(type, data = {}) {
+      parent.postMessage({ pluginMessage: { type, ...data } }, '*');
+    }
+    
+    // 监听来自插件的消息
+    window.addEventListener('message', (event) => {
+      if (event.data.pluginMessage) {
+        const message = event.data.pluginMessage;
+        if (message.type === 'parse-success') {
+          const resultDiv = document.getElementById('parse-result');
+          const messageDiv = document.getElementById('parse-message');
+          messageDiv.textContent = `成功解析 ${message.elementCount} 个元素`;
+          resultDiv.style.display = 'block';
+        } else if (message.type === 'parse-error') {
+          const resultDiv = document.getElementById('parse-result');
+          const messageDiv = document.getElementById('parse-message');
+          messageDiv.textContent = `解析错误: ${message.error}`;
+          resultDiv.style.display = 'block';
+          resultDiv.style.backgroundColor = '#fff0f0';
+          resultDiv.style.borderColor = '#ff3b30';
+          messageDiv.style.color = '#ff3b30';
+        } else if (message.type === 'convert-success') {
+          alert(`成功转换 ${message.elementCount} 个元素到Figma设计`);
+        } else if (message.type === 'convert-error') {
+          alert(`转换错误: ${message.error}`);
+        }
+      }
+    });
+    
+    // 绑定事件
+    document.getElementById('parse-html').addEventListener('click', () => {
+      const html = document.getElementById('html-input').value;
+      sendMessage('parse-html', { html });
+    });
+    
+    document.getElementById('convert-to-design').addEventListener('click', () => {
+      const options = {
+        includeStyles: document.getElementById('include-styles').checked,
+        includeImages: document.getElementById('include-images').checked,
+        preserveLayout: document.getElementById('preserve-layout').checked,
+        useAutoLayout: document.getElementById('use-auto-layout').checked
+      };
+      sendMessage('convert-to-design', { options });
+    });
+    
+    document.getElementById('clear-design').addEventListener('click', () => {
+      sendMessage('clear-design');
+    });
+    
+    document.getElementById('close').addEventListener('click', () => {
+      sendMessage('close');
+    });
+    
+    // 示例代码点击事件
+    document.querySelectorAll('.example-item').forEach(item => {
+      item.addEventListener('click', () => {
+        const example = item.dataset.example;
+        document.getElementById('html-input').value = examples[example];
+      });
+    });
+  </script>
+</body>
+</html>

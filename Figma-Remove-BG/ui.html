@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Figma Remove BG</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background-color: #f5f5f5;
+      color: #1a1a1a;
+      line-height: 1.6;
+    }
+
+    .container {
+      padding: 20px;
+    }
+
+    h1 {
+      font-size: 20px;
+      font-weight: 600;
+      margin-bottom: 20px;
+      color: #1a1a1a;
+    }
+
+    h2 {
+      font-size: 16px;
+      font-weight: 600;
+      margin: 20px 0 10px;
+      color: #333333;
+    }
+
+    .section {
+      background-color: white;
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 16px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+
+    .btn {
+      background-color: #0066cc;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      padding: 10px 20px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background-color 0.2s;
+      margin-right: 8px;
+      margin-bottom: 8px;
+    }
+
+    .btn:hover {
+      background-color: #0052a3;
+    }
+
+    .btn-secondary {
+      background-color: #666666;
+    }
+
+    .btn-secondary:hover {
+      background-color: #525252;
+    }
+
+    .btn-danger {
+      background-color: #dc3545;
+    }
+
+    .btn-danger:hover {
+      background-color: #c82333;
+    }
+
+    .btn-success {
+      background-color: #28a745;
+    }
+
+    .btn-success:hover {
+      background-color: #218838;
+    }
+
+    .method-card {
+      background-color: #f9f9f9;
+      border: 2px solid #e0e0e0;
+      border-radius: 8px;
+      padding: 12px;
+      margin-bottom: 12px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .method-card:hover {
+      border-color: #0066cc;
+      background-color: #f0f0f0;
+    }
+
+    .method-card.selected {
+      border-color: #0066cc;
+      background-color: #e3f2fd;
+    }
+
+    .method-name {
+      font-weight: 600;
+      font-size: 14px;
+      margin-bottom: 4px;
+    }
+
+    .method-description {
+      font-size: 12px;
+      color: #666666;
+    }
+
+    .method-accuracy {
+      display: inline-block;
+      background-color: #4CAF50;
+      color: white;
+      padding: 2px 8px;
+      border-radius: 10px;
+      font-size: 11px;
+      margin-top: 8px;
+    }
+
+    .method-accuracy.medium {
+      background-color: #FF9800;
+    }
+
+    .color-option {
+      background-color: #f9f9f9;
+      border: 2px solid #e0e0e0;
+      border-radius: 8px;
+      padding: 12px;
+      margin-bottom: 12px;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .color-option:hover {
+      border-color: #0066cc;
+      background-color: #f0f0f0;
+    }
+
+    .color-option.selected {
+      border-color: #0066cc;
+      background-color: #e3f2fd;
+    }
+
+    .color-preview {
+      width: 40px;
+      height: 40px;
+      border-radius: 4px;
+      border: 1px solid #e0e0e0;
+    }
+
+    .color-info {
+      flex: 1;
+    }
+
+    .color-name {
+      font-weight: 600;
+      font-size: 14px;
+      margin-bottom: 4px;
+    }
+
+    .color-description {
+      font-size: 12px;
+      color: #666666;
+    }
+
+    .color-picker {
+      width: 100%;
+      padding: 8px;
+      border: 1px solid #e0e0e0;
+      border-radius: 4px;
+      font-size: 14px;
+      margin-top: 8px;
+    }
+
+    .status-message {
+      background-color: #e3f2fd;
+      color: #1976d2;
+      border-radius: 4px;
+      padding: 12px;
+      margin: 10px 0;
+      font-size: 14px;
+    }
+
+    .error-message {
+      background-color: #ffebee;
+      color: #c62828;
+      border-radius: 4px;
+      padding: 12px;
+      margin: 10px 0;
+      font-size: 14px;
+    }
+
+    .loading {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      color: #666666;
+    }
+
+    .spinner {
+      border: 2px solid #f3f3f3;
+      border-top: 2px solid #0066cc;
+      border-radius: 50%;
+      width: 16px;
+      height: 16px;
+      animation: spin 1s linear infinite;
+      margin-right: 8px;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .preview-area {
+      background-color: #f9f9f9;
+      border: 2px dashed #e0e0e0;
+      border-radius: 8px;
+      padding: 20px;
+      text-align: center;
+      margin-top: 16px;
+    }
+
+    .preview-placeholder {
+      color: #999999;
+      font-size: 14px;
+    }
+
+    .export-options {
+      display: flex;
+      gap: 8px;
+      margin-top: 16px;
+    }
+
+    .export-option {
+      flex: 1;
+      padding: 12px;
+      background-color: #f9f9f9;
+      border: 2px solid #e0e0e0;
+      border-radius: 8px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .export-option:hover {
+      border-color: #0066cc;
+      background-color: #f0f0f0;
+    }
+
+    .export-option.selected {
+      border-color: #0066cc;
+      background-color: #e3f2fd;
+    }
+
+    .export-label {
+      font-weight: 600;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🖼️ Figma Remove BG</h1>
+    
+    <!-- 背景移除方法 -->
+    <div class="section">
+      <h2>选择移除方法</h2>
+      <div id="removal-methods"></div>
+    </div>
+
+    <!-- 背景颜色选项 -->
+    <div class="section">
+      <h2>背景颜色</h2>
+      <div id="bg-color-options"></div>
+      <div id="custom-color-picker" style="display: none;">
+        <label style="font-size: 14px; font-weight: 600; margin-bottom: 8px; display: block;">自定义颜色</label>
+        <input type="color" class="color-picker" id="custom-color-input" value="#FFFFFF">
+      </div>
+    </div>
+
+    <!-- 操作按钮 -->
+    <div class="section">
+      <h2>操作</h2>
+      <button class="btn" onclick="removeBackground()">移除背景</button>
+      <button class="btn btn-secondary" onclick="previewResult()">预览结果</button>
+      <button class="btn btn-danger" onclick="undoRemoval()">撤销</button>
+      <button class="btn btn-success" onclick="batchRemove()">批量处理</button>
+    </div>
+
+    <!-- 导出选项 -->
+    <div class="section">
+      <h2>导出</h2>
+      <div class="export-options">
+        <div class="export-option" onclick="exportImage('PNG')" data-format="PNG">
+          <div class="export-label">PNG</div>
+        </div>
+        <div class="export-option" onclick="exportImage('JPG')" data-format="JPG">
+          <div class="export-label">JPG</div>
+        </div>
+        <div class="export-option" onclick="exportImage('SVG')" data-format="SVG">
+          <div class="export-label">SVG</div>
+        </div>
+        <div class="export-option" onclick="exportImage('WEBP')" data-format="WEBP">
+          <div class="export-label">WEBP</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 预览区域 -->
+    <div class="section">
+      <h2>预览</h2>
+      <div class="preview-area" id="preview-area">
+        <div class="preview-placeholder">选择图片并点击"预览结果"查看效果</div>
+      </div>
+    </div>
+
+    <!-- 操作结果 -->
+    <div class="section">
+      <h2>操作结果</h2>
+      <div id="operation-results"></div>
+    </div>
+  </div>
+
+  <script>
+    // 背景移除方法数据
+    const removalMethods = [
+      {
+        id: '1',
+        name: 'AI智能移除',
+        description: '使用AI算法智能识别并移除背景',
+        type: 'AI',
+        accuracy: 'high'
+      },
+      {
+        id: '2',
+        name: '颜色阈值移除',
+        description: '基于颜色阈值移除背景',
+        type: 'COLOR_THRESHOLD',
+        accuracy: 'medium'
+      },
+      {
+        id: '3',
+        name: '边缘检测移除',
+        description: '使用边缘检测算法移除背景',
+        type: 'EDGE_DETECTION',
+        accuracy: 'medium'
+      },
+      {
+        id: '4',
+        name: '手动选择移除',
+        description: '手动选择要移除的背景区域',
+        type: 'MANUAL',
+        accuracy: 'high'
+      }
+    ];
+
+    // 背景颜色选项数据
+    const bgColorOptions = [
+      {
+        id: '1',
+        name: '透明',
+        description: '移除背景后使用透明背景',
+        type: 'TRANSPARENT',
+        color: 'transparent'
+      },
+      {
+        id: '2',
+        name: '白色',
+        description: '移除背景后使用白色背景',
+        type: 'WHITE',
+        color: '#FFFFFF'
+      },
+      {
+        id: '3',
+        name: '黑色',
+        description: '移除背景后使用黑色背景',
+        type: 'BLACK',
+        color: '#000000'
+      },
+      {
+        id: '4',
+        name: '自定义颜色',
+        description: '移除背景后使用自定义颜色',
+        type: 'CUSTOM',
+        color: '#FFFFFF'
+      }
+    ];
+
+    let selectedMethod = 'AI';
+    let selectedBgColor = 'TRANSPARENT';
+    let customColor = '#FFFFFF';
+
+    // 初始化页面
+    document.addEventListener('DOMContentLoaded', function() {
+      renderRemovalMethods();
+      renderBgColorOptions();
+    });
+
+    // 渲染背景移除方法
+    function renderRemovalMethods() {
+      const methodsContainer = document.getElementById('removal-methods');
+      methodsContainer.innerHTML = removalMethods.map(method => `
+        <div class="method-card ${method.type === selectedMethod ? 'selected' : ''}" 
+             onclick="selectMethod('${method.type}')" 
+             data-method="${method.type}">
+          <div class="method-name">${method.name}</div>
+          <div class="method-description">${method.description}</div>
+          <div class="method-accuracy ${method.accuracy === 'medium' ? 'medium' : ''}">${method.accuracy === 'high' ? '高精度' : '中等精度'}</div>
+        </div>
+      `).join('');
+    }
+
+    // 渲染背景颜色选项
+    function renderBgColorOptions() {
+      const colorsContainer = document.getElementById('bg-color-options');
+      colorsContainer.innerHTML = bgColorOptions.map(option => `
+        <div class="color-option ${option.type === selectedBgColor ? 'selected' : ''}" 
+             onclick="selectBgColor('${option.type}')" 
+             data-color="${option.type}">
+          <div class="color-preview" style="background-color: ${option.color}; ${option.color === 'transparent' ? 'background-image: linear-gradient(45deg, #ccc 25%, transparent 25%), linear-gradient(-45deg, #ccc 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #ccc 75%), linear-gradient(-45deg, transparent 75%, #ccc 75%); background-size: 10px 10px; background-position: 0 0, 0 5px, 5px -5px, -5px 0px;' : ''}"></div>
+          <div class="color-info">
+            <div class="color-name">${option.name}</div>
+            <div class="color-description">${option.description}</div>
+          </div>
+        </div>
+      `).join('');
+
+      // 显示/隐藏自定义颜色选择器
+      const customColorPicker = document.getElementById('custom-color-picker');
+      customColorPicker.style.display = selectedBgColor === 'CUSTOM' ? 'block' : 'none';
+    }
+
+    // 选择移除方法
+    function selectMethod(method) {
+      selectedMethod = method;
+      renderRemovalMethods();
+    }
+
+    // 选择背景颜色
+    function selectBgColor(color) {
+      selectedBgColor = color;
+      renderBgColorOptions();
+    }
+
+    // 自定义颜色变化
+    document.getElementById('custom-color-input').addEventListener('change', function(e) {
+      customColor = e.target.value;
+    });
+
+    // 发送消息到插件代码
+    function sendMessage(type, data = {}) {
+      parent.postMessage({ pluginMessage: { type, ...data } }, '*');
+    }
+
+    // 移除背景
+    function removeBackground() {
+      const resultsDiv = document.getElementById('operation-results');
+      resultsDiv.innerHTML = '<div class="loading"><div class="spinner"></div>正在移除背景...</div>';
+      sendMessage('remove-background', { 
+        method: selectedMethod, 
+        bgColor: selectedBgColor,
+        customColor: customColor
+      });
+    }
+
+    // 预览结果
+    function previewResult() {
+      const resultsDiv = document.getElementById('operation-results');
+      resultsDiv.innerHTML = '<div class="loading"><div class="spinner"></div>正在生成预览...</div>';
+      sendMessage('preview-result');
+    }
+
+    // 撤销移除
+    function undoRemoval() {
+      const resultsDiv = document.getElementById('operation-results');
+      resultsDiv.innerHTML = '<div class="loading"><div class="spinner"></div>正在撤销...</div>';
+      sendMessage('undo-removal');
+    }
+
+    // 导出图片
+    function exportImage(format) {
+      const resultsDiv = document.getElementById('operation-results');
+      resultsDiv.innerHTML = `<div class="loading"><div class="spinner"></div>正在导出为 ${format} 格式...</div>`;
+      sendMessage('export-image', { format });
+    }
+
+    // 批量处理
+    function batchRemove() {
+      const resultsDiv = document.getElementById('operation-results');
+      resultsDiv.innerHTML = '<div class="loading"><div class="spinner"></div>正在批量处理...</div>';
+      sendMessage('batch-remove', { 
+        method: selectedMethod, 
+        bgColor: selectedBgColor,
+        customColor: customColor
+      });
+    }
+
+    // 处理来自插件代码的消息
+    onmessage = (event) => {
+      const { type, ...data } = event.data.pluginMessage;
+      
+      switch (type) {
+        case 'background-removed':
+        case 'batch-removed':
+          handleStatusMessage(data.message);
+          updatePreviewArea();
+          break;
+        case 'preview-generated':
+          handleStatusMessage(data.message);
+          updatePreviewArea();
+          break;
+        case 'undo-completed':
+          handleStatusMessage(data.message);
+          resetPreviewArea();
+          break;
+        case 'image-exported':
+          handleStatusMessage(data.message);
+          break;
+        case 'error':
+          handleErrorMessage(data.message);
+          break;
+      }
+    };
+
+    // 更新预览区域
+    function updatePreviewArea() {
+      const previewArea = document.getElementById('preview-area');
+      previewArea.innerHTML = `
+        <div style="background-color: ${selectedBgColor === 'TRANSPARENT' ? 'transparent' : (selectedBgColor === 'CUSTOM' ? customColor : (selectedBgColor === 'WHITE' ? '#FFFFFF' : '#000000'))}; 
+                    width: 100%; height: 200px; border-radius: 4px; 
+                    ${selectedBgColor === 'TRANSPARENT' ? 'background-image: linear-gradient(45deg, #ccc 25%, transparent 25%), linear-gradient(-45deg, #ccc 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #ccc 75%), linear-gradient(-45deg, transparent 75%, #ccc 75%); background-size: 10px 10px; background-position: 0 0, 0 5px, 5px -5px, -5px 0px;' : ''}">
+          <div style="display: flex; align-items: center; justify-content: center; height: 100%; color: #666666; font-size: 14px;">
+            背景已移除
+          </div>
+        </div>
+      `;
+    }
+
+    // 重置预览区域
+    function resetPreviewArea() {
+      const previewArea = document.getElementById('preview-area');
+      previewArea.innerHTML = '<div class="preview-placeholder">选择图片并点击"预览结果"查看效果</div>';
+    }
+
+    // 处理状态消息
+    function handleStatusMessage(message) {
+      const resultsDiv = document.getElementById('operation-results');
+      resultsDiv.innerHTML = `<div class="status-message">${message}</div>`;
+    }
+
+    // 处理错误消息
+    function handleErrorMessage(message) {
+      const resultsDiv = document.getElementById('operation-results');
+      resultsDiv.innerHTML = `<div class="error-message">${message}</div>`;
+    }
+  </script>
+</body>
+</html>

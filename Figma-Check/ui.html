@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PostgreSQL Schema Validator</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background: #f5f5f5;
+      color: #333;
+      overflow: hidden;
+    }
+
+    .container {
+      width: 100%;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .header {
+      background: #215fa3;
+      color: white;
+      padding: 16px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .header h1 {
+      font-size: 18px;
+      font-weight: 600;
+    }
+
+    .header-actions {
+      display: flex;
+      gap: 10px;
+    }
+
+    .content {
+      flex: 1;
+      padding: 20px;
+      overflow-y: auto;
+    }
+
+    .toolbar {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+
+    .button {
+      padding: 8px 16px;
+      border: none;
+      border-radius: 4px;
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-weight: 500;
+    }
+
+    .button-primary {
+      background: #215fa3;
+      color: white;
+    }
+
+    .button-primary:hover {
+      background: #1a4d8a;
+    }
+
+    .button-secondary {
+      background: white;
+      color: #215fa3;
+      border: 1px solid #215fa3;
+    }
+
+    .button-secondary:hover {
+      background: #f0f7ff;
+    }
+
+    .button-success {
+      background: #4caf50;
+      color: white;
+    }
+
+    .button-success:hover {
+      background: #45a049;
+    }
+
+    .button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .card {
+      background: white;
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+
+    .card h2 {
+      font-size: 16px;
+      margin-bottom: 12px;
+      color: #215fa3;
+    }
+
+    .score-card {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px;
+      background: white;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+
+    .score-value {
+      font-size: 48px;
+      font-weight: 700;
+      color: #215fa3;
+    }
+
+    .score-label {
+      font-size: 14px;
+      color: #666;
+      margin-top: 4px;
+    }
+
+    .score-grade {
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-weight: 600;
+      font-size: 18px;
+    }
+
+    .grade-a { background: #4caf50; color: white; }
+    .grade-b { background: #8bc34a; color: white; }
+    .grade-c { background: #ff9800; color: white; }
+    .grade-d { background: #f44336; color: white; }
+    .grade-f { background: #d32f2f; color: white; }
+
+    .summary-stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .stat-item {
+      background: white;
+      padding: 16px;
+      border-radius: 8px;
+      text-align: center;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+
+    .stat-value {
+      font-size: 32px;
+      font-weight: 700;
+    }
+
+    .stat-label {
+      font-size: 12px;
+      color: #666;
+      margin-top: 4px;
+    }
+
+    .stat-error .stat-value { color: #d32f2f; }
+    .stat-warning .stat-value { color: #f57c00; }
+    .stat-info .stat-value { color: #1976d2; }
+
+    .validation-issues {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .issue-item {
+      background: white;
+      border-radius: 8px;
+      padding: 16px;
+      border-left: 4px solid;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+
+    .issue-error {
+      border-left-color: #d32f2f;
+      background: #ffebee;
+    }
+
+    .issue-warning {
+      border-left-color: #f57c00;
+      background: #fff3e0;
+    }
+
+    .issue-info {
+      border-left-color: #1976d2;
+      background: #e3f2fd;
+    }
+
+    .issue-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .issue-code {
+      font-weight: 600;
+      font-size: 14px;
+    }
+
+    .issue-severity {
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+
+    .severity-error {
+      background: #d32f2f;
+      color: white;
+    }
+
+    .severity-warning {
+      background: #f57c00;
+      color: white;
+    }
+
+    .severity-info {
+      background: #1976d2;
+      color: white;
+    }
+
+    .issue-message {
+      font-size: 14px;
+      margin-bottom: 8px;
+    }
+
+    .issue-description {
+      font-size: 12px;
+      color: #666;
+      margin-bottom: 12px;
+    }
+
+    .issue-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .issue-context {
+      background: rgba(0,0,0,0.05);
+      padding: 8px;
+      border-radius: 4px;
+      font-size: 12px;
+      font-family: 'Monaco', 'Menlo', monospace;
+      margin-bottom: 12px;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: #666;
+    }
+
+    .empty-state-icon {
+      font-size: 64px;
+      margin-bottom: 16px;
+    }
+
+    .empty-state-text {
+      font-size: 16px;
+      margin-bottom: 8px;
+    }
+
+    .empty-state-subtext {
+      font-size: 14px;
+      color: #999;
+    }
+
+    .loading {
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      border: 2px solid #f3f3f3;
+      border-top: 2px solid #215fa3;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin-right: 8px;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .footer {
+      background: #f0f0f0;
+      padding: 12px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12px;
+      color: #666;
+      border-top: 1px solid #ddd;
+    }
+
+    .export-options {
+      display: flex;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .selection-info {
+      background: #e3f2fd;
+      padding: 12px;
+      border-radius: 4px;
+      margin-bottom: 16px;
+      font-size: 14px;
+    }
+
+    .selection-count {
+      font-weight: 600;
+      color: #215fa3;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>PostgreSQL Schema Validator</h1>
+      <div class="header-actions">
+        <button class="button button-secondary" onclick="closePlugin()">Close</button>
+      </div>
+    </div>
+
+    <div class="content">
+      <div id="selection-info" class="selection-info hidden">
+        <span class="selection-count">0</span> elements selected
+      </div>
+
+      <div class="toolbar">
+        <button class="button button-primary" onclick="validateDesign()">
+          <span id="validate-loading" class="loading hidden"></span>
+          Validate Design
+        </button>
+        <button class="button button-success" onclick="exportReport('json')">Export JSON</button>
+        <button class="button button-success" onclick="exportReport('md')">Export Markdown</button>
+        <button class="button button-success" onclick="exportReport('txt')">Export Text</button>
+      </div>
+
+      <div id="score-section" class="score-card hidden">
+        <div>
+          <div class="score-value" id="score-value">0</div>
+          <div class="score-label">Validation Score</div>
+        </div>
+        <div class="score-grade" id="score-grade">A</div>
+      </div>
+
+      <div id="summary-section" class="summary-stats hidden">
+        <div class="stat-item stat-error">
+          <div class="stat-value" id="error-count">0</div>
+          <div class="stat-label">Errors</div>
+        </div>
+        <div class="stat-item stat-warning">
+          <div class="stat-value" id="warning-count">0</div>
+          <div class="stat-label">Warnings</div>
+        </div>
+        <div class="stat-item stat-info">
+          <div class="stat-value" id="info-count">0</div>
+          <div class="stat-label">Infos</div>
+        </div>
+      </div>
+
+      <div id="issues-section" class="card hidden">
+        <h2>Validation Issues</h2>
+        <div id="validation-issues" class="validation-issues"></div>
+      </div>
+
+      <div id="empty-state" class="empty-state">
+        <div class="empty-state-icon">🔍</div>
+        <div class="empty-state-text">No validation results</div>
+        <div class="empty-state-subtext">Select a design element to validate the schema</div>
+      </div>
+    </div>
+
+    <div class="footer">
+      <span id="status-text">Ready</span>
+      <span>PostgreSQL Schema Validator v1.0.0</span>
+    </div>
+  </div>
+
+  <script>
+    let currentResults = null;
+
+    function showSection(sectionId) {
+      document.getElementById('score-section').classList.add('hidden');
+      document.getElementById('summary-section').classList.add('hidden');
+      document.getElementById('issues-section').classList.add('hidden');
+      document.getElementById('empty-state').classList.add('hidden');
+      
+      if (sectionId) {
+        document.getElementById(sectionId).classList.remove('hidden');
+      }
+    }
+
+    function updateStatus(text) {
+      document.getElementById('status-text').textContent = text;
+    }
+
+    function setLoading(buttonId, loading) {
+      const loadingEl = document.getElementById(`${buttonId}-loading`);
+      const button = loadingEl.parentElement;
+      
+      if (loading) {
+        loadingEl.classList.remove('hidden');
+        button.disabled = true;
+      } else {
+        loadingEl.classList.add('hidden');
+        button.disabled = false;
+      }
+    }
+
+    function validateDesign() {
+      setLoading('validate', true);
+      parent.postMessage({ pluginMessage: { type: 'validate-design' } }, '*');
+    }
+
+    function exportReport(format) {
+      if (!currentResults) {
+        alert('No validation results to export.');
+        return;
+      }
+      parent.postMessage({ pluginMessage: { type: 'export-report', format } }, '*');
+    }
+
+    function closePlugin() {
+      parent.postMessage({ pluginMessage: { type: 'close' } }, '*');
+    }
+
+    function displayResults(results) {
+      currentResults = results;
+      
+      document.getElementById('score-value').textContent = results.score;
+      document.getElementById('error-count').textContent = results.summary.errors;
+      document.getElementById('warning-count').textContent = results.summary.warnings;
+      document.getElementById('info-count').textContent = results.summary.infos;
+      
+      const grade = getGrade(results.score);
+      const gradeEl = document.getElementById('score-grade');
+      gradeEl.textContent = grade;
+      gradeEl.className = `score-grade grade-${grade.toLowerCase()}`;
+      
+      const issuesContainer = document.getElementById('validation-issues');
+      issuesContainer.innerHTML = '';
+      
+      if (results.issues.length === 0) {
+        showSection('empty-state');
+        document.getElementById('empty-state').innerHTML = `
+          <div class="empty-state-icon">✅</div>
+          <div class="empty-state-text">No issues found!</div>
+          <div class="empty-state-subtext">Your schema is valid and follows best practices</div>
+        `;
+        return;
+      }
+      
+      results.issues.forEach(issue => {
+        const issueEl = createIssueElement(issue);
+        issuesContainer.appendChild(issueEl);
+      });
+      
+      showSection('score-section');
+      showSection('summary-section');
+      showSection('issues-section');
+    }
+
+    function createIssueElement(issue) {
+      const div = document.createElement('div');
+      div.className = `issue-item issue-${issue.severity}`;
+      div.innerHTML = `
+        <div class="issue-header">
+          <span class="issue-code">${issue.code}</span>
+          <span class="issue-severity severity-${issue.severity}">${issue.severity}</span>
+        </div>
+        <div class="issue-message">${issue.message}</div>
+        <div class="issue-description">${issue.description}</div>
+        ${issue.context ? `<div class="issue-context">${JSON.stringify(issue.context, null, 2)}</div>` : ''}
+        <div class="issue-actions">
+          ${issue.autoFix ? `<button class="button button-primary" onclick="fixIssue('${issue.id}')">Auto-fix</button>` : ''}
+          <button class="button button-secondary" onclick="copyIssue('${issue.id}')">Copy</button>
+        </div>
+      `;
+      return div;
+    }
+
+    function getGrade(score) {
+      if (score >= 90) return 'A';
+      if (score >= 80) return 'B';
+      if (score >= 70) return 'C';
+      if (score >= 60) return 'D';
+      return 'F';
+    }
+
+    function fixIssue(issueId) {
+      parent.postMessage({ pluginMessage: { type: 'fix-issue', issueId } }, '*');
+    }
+
+    function copyIssue(issueId) {
+      if (!currentResults) return;
+      
+      const issue = currentResults.issues.find(i => i.id === issueId);
+      if (issue) {
+        const text = `${issue.code}: ${issue.message}\n\n${issue.description}`;
+        navigator.clipboard.writeText(text);
+        alert('Issue copied to clipboard!');
+      }
+    }
+
+    window.onmessage = (event) => {
+      const msg = event.data.pluginMessage || event.data;
+      
+      switch (msg.type) {
+        case 'selection-changed':
+          const selectionInfo = document.getElementById('selection-info');
+          const countEl = selectionInfo.querySelector('.selection-count');
+          countEl.textContent = msg.data.count;
+          
+          if (msg.data.count > 0) {
+            selectionInfo.classList.remove('hidden');
+          } else {
+            selectionInfo.classList.add('hidden');
+            showSection('empty-state');
+          }
+          break;
+          
+        case 'validation-complete':
+          setLoading('validate', false);
+          displayResults(msg.data);
+          updateStatus('Validation complete');
+          break;
+          
+        case 'validation-error':
+          setLoading('validate', false);
+          alert(msg.data.message);
+          updateStatus('Validation error');
+          break;
+          
+        case 'fix-error':
+          alert(msg.data.message);
+          break;
+          
+        case 'export-ready':
+          const { content, filename } = msg.data;
+          const blob = new Blob([content], { type: 'text/plain' });
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = filename;
+          a.click();
+          URL.revokeObjectURL(url);
+          updateStatus('Export complete');
+          break;
+      }
+    };
+  </script>
+</body>
+</html>

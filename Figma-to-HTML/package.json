@@ -1,0 +1,23 @@
+{
+  "name": "figma-to-html",
+  "version": "1.0.0",
+  "description": "Convert Figma designs to HTML code",
+  "main": "code.js",
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc -w"
+  },
+  "keywords": [
+    "figma",
+    "figma-plugin",
+    "html",
+    "css",
+    "code-generation"
+  ],
+  "author": "YYC³ Team",
+  "license": "MIT",
+  "devDependencies": {
+    "@figma/plugin-typings": "^1.80.0",
+    "typescript": "^5.0.0"
+  }
+}

@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gleef</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background-color: #f5f5f5;
+      color: #333;
+      line-height: 1.6;
+    }
+    
+    .container {
+      padding: 20px;
+      max-width: 400px;
+      margin: 0 auto;
+    }
+    
+    h1 {
+      font-size: 20px;
+      font-weight: 600;
+      margin-bottom: 20px;
+      color: #1a1a1a;
+      text-align: center;
+    }
+    
+    .section {
+      background-color: white;
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 16px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+    
+    .section h2 {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 12px;
+      color: #666;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    
+    .button {
+      display: block;
+      width: 100%;
+      padding: 10px 16px;
+      margin-bottom: 8px;
+      background-color: #007AFF;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+    
+    .button:hover {
+      background-color: #0056b3;
+    }
+    
+    .button-secondary {
+      background-color: #f0f0f0;
+      color: #333;
+    }
+    
+    .button-secondary:hover {
+      background-color: #e0e0e0;
+    }
+    
+    .button-group {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+    
+    .button-group .button {
+      flex: 1;
+      margin-bottom: 0;
+    }
+    
+    .input-group {
+      margin-bottom: 12px;
+    }
+    
+    .input-group label {
+      display: block;
+      font-size: 12px;
+      font-weight: 500;
+      margin-bottom: 4px;
+      color: #666;
+    }
+    
+    .input-group input,
+    .input-group select,
+    .input-group textarea {
+      width: 100%;
+      padding: 8px 12px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 14px;
+    }
+    
+    .input-group textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+    
+    .input-row {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+    
+    .input-row .input-group {
+      flex: 1;
+      margin-bottom: 0;
+    }
+    
+    .status {
+      font-size: 12px;
+      color: #666;
+      margin-bottom: 16px;
+      text-align: center;
+    }
+    
+    .divider {
+      height: 1px;
+      background-color: #eee;
+      margin: 16px 0;
+    }
+    
+    .footer {
+      text-align: center;
+      margin-top: 20px;
+      font-size: 12px;
+      color: #999;
+    }
+    
+    /* 效果列表 */
+    .effect-list {
+      max-height: 300px;
+      overflow-y: auto;
+      margin-bottom: 16px;
+    }
+    
+    .effect-category {
+      margin-bottom: 16px;
+    }
+    
+    .effect-category h3 {
+      font-size: 12px;
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: #999;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    
+    .effect-item {
+      padding: 10px;
+      border: 1px solid #eee;
+      border-radius: 6px;
+      margin-bottom: 6px;
+      background-color: #f9f9f9;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    
+    .effect-item:hover {
+      background-color: #f0f0f0;
+      border-color: #007AFF;
+    }
+    
+    .effect-item h4 {
+      font-size: 13px;
+      font-weight: 500;
+      margin-bottom: 2px;
+    }
+    
+    .effect-item p {
+      font-size: 11px;
+      color: #666;
+    }
+    
+    /* 自定义效果 */
+    .custom-effect {
+      padding: 16px;
+      border: 1px solid #eee;
+      border-radius: 6px;
+      background-color: #f9f9f9;
+      margin-bottom: 16px;
+    }
+    
+    /* 颜色选择器 */
+    .color-picker {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+    
+    .color-swatch {
+      width: 30px;
+      height: 30px;
+      border-radius: 4px;
+      border: 1px solid #ddd;
+      cursor: pointer;
+    }
+    
+    .color-swatch:hover {
+      border-color: #007AFF;
+    }
+    
+    /* 批量应用 */
+    .batch-apply {
+      margin-top: 16px;
+      padding-top: 16px;
+      border-top: 1px solid #eee;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Gleef</h1>
+    
+    <div class="status" id="status">
+      已选择 <span id="selected-count">0</span> 个元素
+    </div>
+    
+    <!-- 效果列表 -->
+    <div class="section">
+      <h2>预设效果</h2>
+      <div class="effect-list" id="effect-list">
+        <!-- 效果将通过JavaScript动态添加 -->
+      </div>
+    </div>
+    
+    <!-- 自定义效果 -->
+    <div class="section">
+      <h2>自定义效果</h2>
+      <div class="custom-effect">
+        <div class="input-group">
+          <label for="custom-effect-name">效果名称</label>
+          <input type="text" id="custom-effect-name" placeholder="例如：我的模糊效果">
+        </div>
+        <div class="input-group">
+          <label for="custom-effect-type">效果类型</label>
+          <select id="custom-effect-type">
+            <option value="blur">模糊</option>
+            <option value="shadow">阴影</option>
+            <option value="glow">光晕</option>
+            <option value="gradient">渐变</option>
+            <option value="noise">噪点</option>
+            <option value="distortion">扭曲</option>
+            <option value="vintage">复古</option>
+            <option value="comic">漫画</option>
+            <option value="pixel">像素</option>
+          </select>
+        </div>
+        <div class="input-group">
+          <label for="custom-effect-params">效果参数 (JSON)</label>
+          <textarea id="custom-effect-params" placeholder="{\n  \"radius\": 10,\n  \"type\": \"GAUSSIAN\"\n}"></textarea>
+        </div>
+        <button class="button" id="apply-custom-effect">应用自定义效果</button>
+        <button class="button button-secondary" id="save-custom-effect">保存自定义效果</button>
+      </div>
+    </div>
+    
+    <!-- 批量应用 -->
+    <div class="section">
+      <h2>批量应用</h2>
+      <p style="font-size: 12px; color: #666; margin-bottom: 12px;">将效果应用到页面上的所有元素</p>
+      <button class="button button-secondary" id="batch-apply">批量应用选中效果</button>
+    </div>
+    
+    <!-- 效果管理 -->
+    <div class="section">
+      <h2>效果管理</h2>
+      <button class="button button-secondary" id="remove-all-effects">移除所有效果</button>
+    </div>
+    
+    <div class="divider"></div>
+    
+    <button class="button button-secondary" id="close">关闭</button>
+    
+    <div class="footer">
+      Gleef v1.0.0
+    </div>
+  </div>
+  
+  <script>
+    // 预设效果
+    let presetEffects = [];
+    let selectedEffectId = null;
+    
+    // 发送消息到插件
+    function sendMessage(type, data = {}) {
+      parent.postMessage({ pluginMessage: { type, ...data } }, '*');
+    }
+    
+    // 监听来自插件的消息
+    window.addEventListener('message', (event) => {
+      if (event.data.pluginMessage) {
+        const message = event.data.pluginMessage;
+        if (message.type === 'init') {
+          document.getElementById('selected-count').textContent = message.selectedCount;
+          presetEffects = message.presetEffects || [];
+          updateEffectList();
+        } else if (message.type === 'effects-updated') {
+          presetEffects = message.presetEffects || [];
+          updateEffectList();
+        }
+      }
+    });
+    
+    // 更新效果列表
+    function updateEffectList() {
+      const effectList = document.getElementById('effect-list');
+      
+      // 按类型分组效果
+      const effectsByType = presetEffects.reduce((groups, effect) => {
+        const type = effect.type;
+        if (!groups[type]) {
+          groups[type] = [];
+        }
+        groups[type].push(effect);
+        return groups;
+      }, {});
+      
+      // 生成HTML
+      let html = '';
+      Object.entries(effectsByType).forEach(([type, effects]) => {
+        html += `
+          <div class="effect-category">
+            <h3>${getTypeName(type)}</h3>
+            ${effects.map(effect => `
+              <div class="effect-item" data-effect-id="${effect.id}">
+                <h4>${effect.name}</h4>
+                <p>${getTypeDescription(effect.type)}</p>
+              </div>
+            `).join('')}
+          </div>
+        `;
+      });
+      
+      effectList.innerHTML = html;
+      
+      // 添加点击事件
+      document.querySelectorAll('.effect-item').forEach(item => {
+        item.addEventListener('click', () => {
+          const effectId = item.dataset.effectId;
+          selectedEffectId = effectId;
+          
+          // 高亮选中的效果
+          document.querySelectorAll('.effect-item').forEach(i => {
+            i.style.borderColor = '#eee';
+          });
+          item.style.borderColor = '#007AFF';
+          
+          // 应用效果
+          sendMessage('apply-effect', { effectId });
+        });
+      });
+    }
+    
+    // 获取类型名称
+    function getTypeName(type) {
+      const typeNames = {
+        'blur': '模糊',
+        'shadow': '阴影',
+        'glow': '光晕',
+        'gradient': '渐变',
+        'noise': '噪点',
+        'distortion': '扭曲',
+        'vintage': '复古',
+        'comic': '漫画',
+        'pixel': '像素'
+      };
+      return typeNames[type] || type;
+    }
+    
+    // 获取类型描述
+    function getTypeDescription(type) {
+      const typeDescriptions = {
+        'blur': '添加模糊效果',
+        'shadow': '添加阴影效果',
+        'glow': '添加光晕效果',
+        'gradient': '添加渐变效果',
+        'noise': '添加噪点效果',
+        'distortion': '添加扭曲效果',
+        'vintage': '添加复古效果',
+        'comic': '添加漫画效果',
+        'pixel': '添加像素效果'
+      };
+      return typeDescriptions[type] || '';
+    }
+    
+    // 绑定事件
+    document.getElementById('apply-custom-effect').addEventListener('click', () => {
+      const effect = {
+        id: `custom-${Date.now()}`,
+        name: document.getElementById('custom-effect-name').value || '自定义效果',
+        type: document.getElementById('custom-effect-type').value,
+        parameters: JSON.parse(document.getElementById('custom-effect-params').value || '{}')
+      };
+      
+      sendMessage('apply-custom-effect', { effect });
+    });
+    
+    document.getElementById('save-custom-effect').addEventListener('click', () => {
+      const effect = {
+        id: `saved-${Date.now()}`,
+        name: document.getElementById('custom-effect-name').value || '自定义效果',
+        type: document.getElementById('custom-effect-type').value,
+        parameters: JSON.parse(document.getElementById('custom-effect-params').value || '{}')
+      };
+      
+      sendMessage('save-effect', { effect });
+    });
+    
+    document.getElementById('batch-apply').addEventListener('click', () => {
+      if (!selectedEffectId) {
+        alert('请先选择一个效果');
+        return;
+      }
+      sendMessage('batch-apply', { effectId: selectedEffectId });
+    });
+    
+    document.getElementById('remove-all-effects').addEventListener('click', () => {
+      sendMessage('remove-all-effects');
+    });
+    
+    document.getElementById('close').addEventListener('click', () => {
+      sendMessage('close');
+    });
+  </script>
+</body>
+</html>

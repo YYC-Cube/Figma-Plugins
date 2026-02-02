@@ -1,0 +1,63 @@
+{
+  "name": "figma-postgres-Code",
+  "id": "1598520909357387389",
+  "api": "1.0.0",
+  "main": "code.js",
+  "capabilities": [
+    "codegen"
+  ],
+  "enableProposedApi": false,
+  "documentAccess": "dynamic-page",
+  "editorType": [
+    "figma",
+    "dev"
+  ],
+  "ui": "ui.html",
+  "codegenLanguages": [
+    {
+      "label": "PostgreSQL SQL",
+      "value": "sql"
+    },
+    {
+      "label": "Prisma ORM",
+      "value": "prisma"
+    },
+    {
+      "label": "TypeORM",
+      "value": "typeorm"
+    },
+    {
+      "label": "Sequelize",
+      "value": "sequelize"
+    },
+    {
+      "label": "Drizzle ORM",
+      "value": "drizzle"
+    },
+    {
+      "label": "Express API",
+      "value": "express"
+    },
+    {
+      "label": "Fastify API",
+      "value": "fastify"
+    },
+    {
+      "label": "NestJS API",
+      "value": "nestjs"
+    },
+    {
+      "label": "Next.js API",
+      "value": "nextjs"
+    },
+    {
+      "label": "Hono API",
+      "value": "hono"
+    }
+  ],
+  "networkAccess": {
+    "allowedDomains": [
+      "*"
+    ]
+  }
+}

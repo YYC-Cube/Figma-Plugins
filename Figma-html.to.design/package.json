@@ -1,0 +1,24 @@
+{
+  "name": "figma-html-to-design",
+  "version": "1.0.0",
+  "description": "Figma HTML to Design - 将HTML代码转换为Figma设计的插件",
+  "main": "code.js",
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc -w",
+    "dev": "tsc -w"
+  },
+  "keywords": [
+    "figma",
+    "figma-plugin",
+    "html",
+    "design",
+    "converter"
+  ],
+  "author": "YYC³",
+  "license": "MIT",
+  "devDependencies": {
+    "@figma/plugin-typings": "^1.84.0",
+    "typescript": "^5.0.0"
+  }
+}
